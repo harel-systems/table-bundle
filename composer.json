@@ -1,0 +1,30 @@
+{
+    "name": "harel-systems/table-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony bundle to generate dynamic data tables",
+    "keywords": ["table", "datagrid"],
+    "homepage": "https://www.helloharel.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Maxime Corteel",
+            "email": "maxime.corteel@harelsystems.com"
+        }
+    ],
+    "require": {
+        "php": "^7.3"
+    },
+    "require-dev": {
+        
+    },
+    "autoload": {
+        "psr-4": {
+            "Harel\\TableBundle\\": ""
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Harel\\TableBundle\\Tests\\": "/Tests/"
+        }
+    }
+}

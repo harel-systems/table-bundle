@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="harel_table.column.entity" class="Harel\TableBundle\Column\EntityColumn">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="translator" on-invalid="null" />
+            <tag name="table.column" key="Harel\TableBundle\Column\EntityColumn" />
+        </service>
+    
+        <service id="harel_table.table_builder" class="Harel\TableBundle\Service\TableBuilder" shared="false">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="tagged_locator" tag="table.column" index-by="key" />
+            <argument type="tagged_locator" tag="table.filter" index-by="key" />
+        </service>
+        
+        <service id="harel_table.table" class="Harel\TableBundle\Service\Table">
+            <call method="setTableBuilder">
+                <argument type="service" id="harel_table.table_builder" />
+            </call>
+        </service>
+    </services>
+</container>
