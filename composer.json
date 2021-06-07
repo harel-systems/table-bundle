@@ -1,7 +1,7 @@
 {
     "name": "harel-systems/table-bundle",
     "type": "symfony-bundle",
-    "description": "Symfony bundle to generate dynamic data tables",
+    "description": "A Symfony bundle to generate dynamic data tables",
     "keywords": ["table", "datagrid"],
     "homepage": "https://www.helloharel.com",
     "license": "MIT",
