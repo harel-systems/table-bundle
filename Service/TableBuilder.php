@@ -379,7 +379,14 @@ class TableBuilder
                 }
                 $this->filters[$_filter['custom']]['filter']($queryBuilder, $_filter);
             } elseif(isset($this->columns[$_filter['column']])) {
-                (clone ($this->filterLocator->has($_filter['class']) ? $this->filterLocator->get($_filter['class']) : new $_filter['class']()))
+                if($this->filterLocator->has($_filter['class'])) {
+                    $filter = $this->filterLocator->get($_filter['class']);
+                } elseif(class_exists($_filter['class'])) {
+                    $filter = new $_filter['class']();
+                } else {
+                    continue;
+                }
+                (clone $filter)
                     ->setColumn($this->columns[$_filter['column']])
                     ->setValue($_filter['val'])
                     ->apply($queryBuilder);
