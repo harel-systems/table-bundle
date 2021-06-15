@@ -44,8 +44,19 @@ class EntityFilter extends BaseFilter
             return;
         }
         
-        $queryBuilder
-            ->andWhere($this->column->getSelector() . ' IN (:' . $identifier . ')')
-            ->setParameter($identifier, $values);
+        if(false !== $index = array_search('null', $values)) {
+            array_splice($values, $index, 1);
+            if(empty($values)) {
+                $queryBuilder->andWhere($this->column->getSelector() . ' IS NULL');
+            } else {
+                $queryBuilder
+                    ->andWhere($this->column->getSelector() . ' IS NULL OR ' . $this->column->getSelector() . ' IN (:' . $identifier . ')')
+                    ->setParameter($identifier, $values);
+            }
+        } else {
+            $queryBuilder
+                ->andWhere($this->column->getSelector() . ' IN (:' . $identifier . ')')
+                ->setParameter($identifier, $values);
+        }
     }
 }

@@ -76,6 +76,18 @@ class EntityColumn extends LinkColumn
             );
         }
         
+        if($this->options['nullFilter'] !== false) {
+            $filters[] = array(
+                'title' => $this->options['title'],
+                'class' => EntityFilter::class,
+                'column' => $this->identifier,
+                'value' => $this->identifier . '.null',
+                'val' => 'null',
+                'label' => $this->options['nullFilter'],
+                'multiple' => true,
+            );
+        }
+        
         $filters[] = array(
             'title' => $this->options['title'],
             'class' => TextFilter::class,
@@ -101,6 +113,7 @@ class EntityColumn extends LinkColumn
                 'sortSelector' => function(Options $options) {
                     return $options['selector'] . '.id';
                 },
+                'nullFilter' => false,
             ))
             ->setRequired(['class', 'selector'])
             ->setAllowedTypes('class', ['string'])
