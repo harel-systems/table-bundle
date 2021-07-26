@@ -47,6 +47,11 @@ abstract class Column
         return null;
     }
     
+    public function getDisplayable()
+    {
+        return !$this->options['filterOnly'];
+    }
+    
     public function getDisplay($export)
     {
         return $this->options['display'] && ($export ? $this->options['export'] : true);
@@ -232,6 +237,7 @@ abstract class Column
                 'exportGetter' => null,
                 'normalizer' => null,
                 'exportNormalizer' => null,
+                'filterOnly' => false,
                 'filter' => true,
                 'filterPlaceholder' => false,
                 'filterSelector' => null,

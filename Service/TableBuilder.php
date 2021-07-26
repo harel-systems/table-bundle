@@ -97,11 +97,10 @@ class TableBuilder
         return $this;
     }
     
-    public function addFilter($identifier, $definition)
+    public function addFilter($identifier, $class, $definition)
     {
-        $this->filters[$identifier] = $definition;
-        
-        return $this;
+        $definition['filterOnly'] = true;
+        return $this->add($identifier, $class, $definition);
     }
     
     public function addDateFilter($identifier, $definition)
@@ -176,7 +175,6 @@ class TableBuilder
     {
         $this->columns = array();
         $this->quickFilters = array();
-        $this->filters = array();
         $this->dateFilters = array();
         $this->dataNormalizers = [];
         $this->rowLinkGetter = null;
@@ -288,7 +286,7 @@ class TableBuilder
         }
         
         foreach($this->columns as $identifier => $column) {
-            if(isset($header[$identifier])) {
+            if(isset($header[$identifier]) || !$column->getDisplayable()) {
                 continue;
             }
             $header[$identifier] = $column;
@@ -373,11 +371,6 @@ class TableBuilder
                     continue;
                 }
                 $this->quickFilters[$_filter['quick']]['filter']($queryBuilder);
-            } elseif(isset($_filter['custom'])) {
-                if(!isset($this->filters[$_filter['custom']])) {
-                    continue;
-                }
-                $this->filters[$_filter['custom']]['filter']($queryBuilder, $_filter);
             } elseif(isset($this->columns[$_filter['column']])) {
                 if($this->filterLocator->has($_filter['class'])) {
                     $filter = $this->filterLocator->get($_filter['class']);
@@ -448,6 +441,9 @@ class TableBuilder
             }
             
             foreach($this->columns as $column) {
+                if(!$column->getDisplayable()) {
+                    continue;
+                }
                 $column->getRowData($row);
             }
             
@@ -491,12 +487,6 @@ class TableBuilder
         
         foreach($this->columns as $column) {
             $filters = array_merge($filters, $column->getFilters($query));
-        }
-        
-        foreach($this->filters as $key => $filter) {
-            $filters = array_merge($filters, array_map(function($filter) use($key) {
-                return array_merge($filter, array('custom' => $key));
-            }, $filter['getter']($query)));
         }
         
         return $filters;
@@ -584,9 +574,10 @@ class TableBuilder
         $columns = $this->getOrderedColumns($pagination);
         $firstRow = array();
         foreach($columns as $column) {
-            if($column->getDisplay(true)) {
-                $firstRow[$column->getIdentifier()] = $column->getTitle();
+            if(!$column->getDisplayable() || !$column->getDisplay(true)) {
+                continue;
             }
+            $firstRow[$column->getIdentifier()] = $column->getTitle();
         }
         
         $row = WriterEntityFactory::createRowFromArray($firstRow);
@@ -609,9 +600,10 @@ class TableBuilder
                 $row = new Row($entry);
                 
                 foreach($columns as $column) {
-                    if($column->getDisplay(true)) {
-                        $column->getExportData($row);
+                    if(!$column->getDisplayable() || !$column->getDisplay(true)) {
+                        continue;
                     }
+                    $column->getExportData($row);
                 }
                 
                 foreach($this->exportNormalizers as $normalizer) {
