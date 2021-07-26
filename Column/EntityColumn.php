@@ -88,15 +88,17 @@ class EntityColumn extends LinkColumn
             );
         }
         
-        $filters[] = array(
-            'title' => $this->options['title'],
-            'class' => TextFilter::class,
-            'column' => $this->identifier,
-            'value' => $this->identifier . '.' . $value,
-            'val' => $value,
-            'label' => $this->trans('Matching "%query%"', array('%query%' => (string)$value), 'HarelTableBundle'),
-            'multiple' => true,
-        );
+        if($this->options['matchingFilter']) {
+            $filters[] = array(
+                'title' => $this->options['title'],
+                'class' => TextFilter::class,
+                'column' => $this->identifier,
+                'value' => $this->identifier . '.' . $value,
+                'val' => $value,
+                'label' => $this->trans('Matching "%query%"', array('%query%' => (string)$value), 'HarelTableBundle'),
+                'multiple' => true,
+            );
+        }
         
         return $filters;
     }
@@ -110,6 +112,7 @@ class EntityColumn extends LinkColumn
                 'filterCallback' => null,
                 'filteringCallback' => null,
                 'slugFilter' => false,
+                'matchingFilter' => true,
                 'sortSelector' => function(Options $options) {
                     return $options['selector'] . '.id';
                 },
