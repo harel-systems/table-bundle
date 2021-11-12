@@ -40,13 +40,18 @@ class EntityColumn extends LinkColumn
         return /** @Ignore */$this->translator->trans($message, $params, $domain);
     }
     
+    public function getFilterEntityIdentifier()
+    {
+        return $this->options['filterEntityIdentifier'] ?? $this->options['selector'];
+    }
+    
     public function getApplicableFilters(string $value)
     {
         $filters = [];
         
         $queryBuilder = $this->em
             ->getRepository($this->options['class'])
-            ->createQueryBuilder($this->options['selector'])
+            ->createQueryBuilder($this->getFilterEntityIdentifier())
             ->setMaxResults(self::MAX_RESULTS);
         
         if($this->options['filterSelector']) {
@@ -111,10 +116,11 @@ class EntityColumn extends LinkColumn
             ->setDefaults(array(
                 'filterCallback' => null,
                 'filteringCallback' => null,
+                'filterEntityIdentifier' => null,
                 'slugFilter' => false,
                 'matchingFilter' => true,
                 'sortSelector' => function(Options $options) {
-                    return $options['selector'] . '.id';
+                    return $this->getFilterEntityIdentifier() . '.id';
                 },
                 'nullFilter' => false,
             ))
