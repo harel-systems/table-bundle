@@ -120,7 +120,7 @@ class EntityColumn extends LinkColumn
                 'slugFilter' => false,
                 'matchingFilter' => true,
                 'sortSelector' => function(Options $options) {
-                    return $this->getFilterEntityIdentifier() . '.id';
+                    return ($options['filterEntityIdentifier'] ?? $options['selector']) . '.id';
                 },
                 'nullFilter' => false,
             ))
