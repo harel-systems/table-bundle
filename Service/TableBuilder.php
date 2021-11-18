@@ -739,6 +739,6 @@ class TableBuilder
         
         $this->filterData($queryBuilder, $pagination['filters'] ?: []);
         
-        return array_values(array_unique($queryBuilder->getQuery()->getResult('id_hydrator')));
+        return $queryBuilder->getQuery()->getResult('id_hydrator');
     }
 }

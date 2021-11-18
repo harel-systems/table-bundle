@@ -338,7 +338,7 @@ abstract class Table
         return $this->tableBuilder->getNavigation($id, $queryBuilder, $this->pagination);
     }
     
-    public function getSelection($property = 'o.id')
+    public function getSelection($property = 'DISTINCT o.id')
     {
         $this->tableBuilder->resetBuild();
         $this->build($this->tableBuilder);
@@ -350,7 +350,7 @@ abstract class Table
         return $this->tableBuilder->getSelection($queryBuilder, $this->pagination, $property);
     }
     
-    public function getSelectionFromString($selection, $property = 'o.id')
+    public function getSelectionFromString($selection, $property = 'DISTINCT o.id')
     {
         switch($selection) {
             case 'all':
