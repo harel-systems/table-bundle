@@ -731,7 +731,7 @@ class TableBuilder
         );
     }
     
-    public function getSelection($queryBuilder, $pagination, $property = 'o.id')
+    public function getSelection($queryBuilder, $pagination, $property = 'DISTINCT o.id')
     {
         $queryBuilder->select($property);
         
@@ -739,6 +739,6 @@ class TableBuilder
         
         $this->filterData($queryBuilder, $pagination['filters'] ?: []);
         
-        return $queryBuilder->getQuery()->getResult('id_hydrator');
+        return array_values(array_unique($queryBuilder->getQuery()->getResult('id_hydrator')));
     }
 }
