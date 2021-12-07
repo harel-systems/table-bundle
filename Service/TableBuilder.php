@@ -257,10 +257,7 @@ class TableBuilder
             'pagination_total' => $this->params['pagination_total'],
             'filterable' => $this->params['filterable'],
             'sidebar' => $this->params['sidebar'],
-            'selection' => $this->params['selection'] === 'none' ? false : array(
-                'multiple' => $this->params['selection'] === 'multiple',
-                'line' => $this->params['selection'] === 'line',
-            ),
+            'selection' => $this->params['selection'],
             'date_filter' => $this->serializeDateFilters(),
             'documentsUrl' => $this->params['documentsUrl'],
             'sidebarUrl' => $this->params['sidebarUrl'],
