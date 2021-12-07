@@ -218,7 +218,6 @@ class TableBuilder
             'sidebar' => false,
             'selection' => 'single',
             'changeset' => false,
-            'export' => true,
             'documentsUrl' => null,
             'sidebarUrl' => null,
             'sidebarLastSeen' => null,
@@ -260,6 +259,7 @@ class TableBuilder
             'sidebar' => $this->params['sidebar'],
             'selection' => $this->params['selection'] === 'none' ? false : array(
                 'multiple' => $this->params['selection'] === 'multiple',
+                'line' => $this->params['selection'] === 'line',
             ),
             'date_filter' => $this->serializeDateFilters(),
             'documentsUrl' => $this->params['documentsUrl'],
