@@ -218,6 +218,7 @@ class TableBuilder
             'sidebar' => false,
             'selection' => 'single',
             'changeset' => false,
+            'export' => true,
             'documentsUrl' => null,
             'sidebarUrl' => null,
             'sidebarLastSeen' => null,
@@ -257,7 +258,9 @@ class TableBuilder
             'pagination_total' => $this->params['pagination_total'],
             'filterable' => $this->params['filterable'],
             'sidebar' => $this->params['sidebar'],
-            'selection' => $this->params['selection'],
+            'selection' => $this->params['selection'] === 'none' ? false : array(
+                'multiple' => $this->params['selection'] === 'multiple',
+            ),
             'date_filter' => $this->serializeDateFilters(),
             'documentsUrl' => $this->params['documentsUrl'],
             'sidebarUrl' => $this->params['sidebarUrl'],
