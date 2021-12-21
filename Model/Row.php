@@ -28,7 +28,7 @@ class Row
     public function __construct($data)
     {
         $this->rawData = $data;
-        if(array_key_exists('0', $data)) {
+        if(is_array($data) && array_key_exists('0', $data)) {
             $this->data = $data[0];
         } else {
             $this->data = $data;
