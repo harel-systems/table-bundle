@@ -14,7 +14,7 @@ namespace Harel\TableBundle\Event;
 use Doctrine\ORM\QueryBuilder;
 use Harel\TableBundle\Service\Table;
 
-class TableBuiltEvent
+class TableQueryBuiltEvent
 {
     const NAME = 'table_query_built';
     
