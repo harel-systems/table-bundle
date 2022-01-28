@@ -13,8 +13,11 @@ namespace Harel\TableBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Parameter;
+use Harel\TableBundle\Event\TableBuiltEvent;
+use Harel\TableBundle\Event\TableQueryBuiltEvent;
 use Harel\TableBundle\Service\TableBuilder;
 use Spatie\Url\Url;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,6 +33,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 abstract class Table
 {
     protected $tableBuilder;
+    protected $dispatcher = null;
     protected $pagination;
     protected $configUpdated = false;
     protected $url = null;
@@ -43,6 +47,21 @@ abstract class Table
     public function setTableBuilder(TableBuilder $tableBuilder)
     {
         $this->tableBuilder = $tableBuilder;
+    }
+    
+    /**
+     * @required
+     */
+    public function setEventDispatcher(?EventDispatcherInterface $eventDispatcher)
+    {
+        $this->dispatcher = $eventDispatcher;
+    }
+    
+    protected function dispatchEvent($event, $name)
+    {
+        if($this->dispatcher !== null) {
+            return $this->dispatcher->dispatch($event, $name);
+        }
     }
     
     public function setOptions(array $options)
@@ -253,6 +272,8 @@ abstract class Table
         $this->tableBuilder->resetBuild();
         $this->build($this->tableBuilder);
         
+        $this->dispatchEvent(new TableBuiltEvent($this, $this->tableBuilder), TableBuiltEvent::NAME);
+        
         $this->updatePagination($request);
         
         if(null !== $query = $request->query->get('s')) {
@@ -260,6 +281,8 @@ abstract class Table
         }
         
         $queryBuilder = $this->getBuilder();
+        
+        $this->dispatchEvent(new TableQueryBuiltEvent($this, $queryBuilder), TableQueryBuiltEvent::NAME);
         
         $pagination = $this->pagination;
         
@@ -284,8 +307,12 @@ abstract class Table
             // Rebuild table with new data
             $this->tableBuilder->resetBuild();
             $this->build($this->tableBuilder);
+        
+            $this->dispatchEvent(new TableBuiltEvent($this, $this->tableBuilder), TableBuiltEvent::NAME);
             
             $queryBuilder = $this->getBuilder();
+            
+            $this->dispatchEvent(new TableQueryBuiltEvent($this, $this->tableBuilder), TableQueryBuiltEvent::NAME);
             
             $_data = $this->tableBuilder->serializeAggregatedData(clone $queryBuilder, false, $_dataOnly);
             
@@ -331,9 +358,13 @@ abstract class Table
         $this->tableBuilder->resetBuild();
         $this->build($this->tableBuilder);
         
+        $this->dispatchEvent(new TableBuiltEvent($this, $this->tableBuilder), TableBuiltEvent::NAME);
+        
         $this->updatePagination();
         
         $queryBuilder = $this->getBuilder();
+        
+        $this->dispatchEvent(new TableQueryBuiltEvent($this, $queryBuilder), TableQueryBuiltEvent::NAME);
         
         return $this->tableBuilder->getNavigation($id, $queryBuilder, $this->pagination);
     }
@@ -343,9 +374,13 @@ abstract class Table
         $this->tableBuilder->resetBuild();
         $this->build($this->tableBuilder);
         
+        $this->dispatchEvent(new TableBuiltEvent($this, $this->tableBuilder), TableBuiltEvent::NAME);
+        
         $this->updatePagination();
         
         $queryBuilder = $this->getBuilder();
+        
+        $this->dispatchEvent(new TableQueryBuiltEvent($this, $queryBuilder), TableQueryBuiltEvent::NAME);
         
         return $this->tableBuilder->getSelection($queryBuilder, $this->pagination, $property);
     }
