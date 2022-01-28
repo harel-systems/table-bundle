@@ -312,7 +312,7 @@ abstract class Table
             
             $queryBuilder = $this->getBuilder();
             
-            $this->dispatchEvent(new TableQueryBuiltEvent($this, $this->tableBuilder), TableQueryBuiltEvent::NAME);
+            $this->dispatchEvent(new TableQueryBuiltEvent($this, $queryBuilder), TableQueryBuiltEvent::NAME);
             
             $_data = $this->tableBuilder->serializeAggregatedData(clone $queryBuilder, false, $_dataOnly);
             
