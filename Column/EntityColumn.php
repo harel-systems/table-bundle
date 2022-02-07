@@ -12,6 +12,7 @@
 namespace Harel\TableBundle\Column;
 
 use Harel\TableBundle\Column\LinkColumn;
+use Harel\TableBundle\Event\EntityFilterQueryBuiltEvent;
 use Harel\TableBundle\Filter\EntityFilter;
 use Harel\TableBundle\Filter\TextFilter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,7 +29,7 @@ class EntityColumn extends LinkColumn
     private $translator = null;
     private $dispatcher = null;
 
-    public function __construct(EntityManagerInterface $em, ?EventDispatcherInterface $eventDispatcher = null, ?TranslatorInterface $translator = null)
+    public function __construct(EntityManagerInterface $em, ?EventDispatcherInterface $dispatcher = null, ?TranslatorInterface $translator = null)
     {
         $this->em = $em;
         $this->translator = $translator;
