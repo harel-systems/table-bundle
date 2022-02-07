@@ -13,8 +13,9 @@ namespace Harel\TableBundle\Event;
 
 use Harel\TableBundle\Service\TableBuilder;
 use Harel\TableBundle\Service\Table;
+use Symfony\Contracts\EventDispatcher\Event;
 
-class TableBuiltEvent
+class TableBuiltEvent extends Event
 {
     const NAME = 'table_built';
     

@@ -12,29 +12,35 @@
 namespace Harel\TableBundle\Event;
 
 use Doctrine\ORM\QueryBuilder;
-use Harel\TableBundle\Service\Table;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class TableQueryBuiltEvent extends Event
+class EntityFilterQueryBuiltEvent extends Event
 {
-    const NAME = 'table_query_built';
+    const NAME = 'entity_filter_query_built';
     
-    protected $table;
+    protected $entityClass;
     protected $queryBuilder;
+    protected $selector;
     
-    public function __construct(Table $table, QueryBuilder $queryBuilder)
+    public function __construct(string $entityClass, QueryBuilder $queryBuilder, string $selector = 'o')
     {
-        $this->table = $table;
+        $this->entityClass = $entityClass;
         $this->queryBuilder = $queryBuilder;
+        $this->selector = $selector;
     }
     
-    public function getTable(): Table
+    public function getEntityClass(): string
     {
-        return $this->table;
+        return $this->entityClass;
     }
     
     public function getQueryBuilder(): QueryBuilder
     {
         return $this->queryBuilder;
+    }
+    
+    public function getSelector(): string
+    {
+        return $this->selector;
     }
 }

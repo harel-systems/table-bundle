@@ -18,18 +18,21 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class EntityColumn extends LinkColumn
 {
     const MAX_RESULTS = 5;
     
     private $em;
-    private $translator;
+    private $translator = null;
+    private $dispatcher = null;
 
-    public function __construct(EntityManagerInterface $em, TranslatorInterface $translator = null)
+    public function __construct(EntityManagerInterface $em, ?EventDispatcherInterface $eventDispatcher = null, ?TranslatorInterface $translator = null)
     {
         $this->em = $em;
         $this->translator = $translator;
+        $this->dispatcher = $dispatcher;
     }
     
     private function trans($message, $params, $domain)
@@ -49,9 +52,11 @@ class EntityColumn extends LinkColumn
     {
         $filters = [];
         
+        $selector = $this->getFilterEntityIdentifier();
+        
         $queryBuilder = $this->em
             ->getRepository($this->options['class'])
-            ->createQueryBuilder($this->getFilterEntityIdentifier())
+            ->createQueryBuilder($selector)
             ->setMaxResults(self::MAX_RESULTS);
         
         if($this->options['filterSelector']) {
@@ -59,8 +64,13 @@ class EntityColumn extends LinkColumn
                 ->where($this->options['filterSelector'] . ' LIKE :text_' . str_replace('.', '_', $this->identifier))
                 ->setParameter('text_' . str_replace('.', '_', $this->identifier), '%' . $value . '%');
         }
+        
         if($this->options['filterCallback']) {
             $this->options['filterCallback']($queryBuilder, $value);
+        }
+        
+        if($this->dispatcher !== null) {
+            $this->dispatcher->dispatch(new EntityFilterQueryBuiltEvent($this->options['class'], $queryBuilder, $selector), EntityFilterQueryBuiltEvent::NAME);
         }
         
         try {

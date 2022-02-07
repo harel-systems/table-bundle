@@ -17,7 +17,6 @@ use Harel\TableBundle\Event\TableBuiltEvent;
 use Harel\TableBundle\Event\TableQueryBuiltEvent;
 use Harel\TableBundle\Service\TableBuilder;
 use Spatie\Url\Url;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,6 +28,7 @@ use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 abstract class Table
 {
