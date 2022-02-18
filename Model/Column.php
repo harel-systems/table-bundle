@@ -138,6 +138,16 @@ abstract class Column
         $this->buttons[$identifier] = $button;
     }
     
+    protected function addFilterJoins($queryBuilder)
+    {
+        foreach($this->options['filterJoin'] as $def => $selector) {
+            $queryBuilder->join($def, $selector);
+        }
+        foreach($this->options['filterLeftJoin'] as $def => $selector) {
+            $queryBuilder->leftJoin($def, $selector);
+        }
+    }
+    
     public function serialize()
     {
         $column = array(
@@ -241,6 +251,8 @@ abstract class Column
                 'filter' => true,
                 'filterPlaceholder' => false,
                 'filterSelector' => null,
+                'filterJoin' => array(),
+                'filterLeftJoin' => array(),
                 'export' => true,
                 'contentClassProperty' => null,
                 'selector' => function(Options $options) {

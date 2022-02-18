@@ -376,8 +376,12 @@ class TableBuilder
                 } else {
                     continue;
                 }
+                
+                $column = $this->columns[$_filter['column']];
+                $column->addFilterJoins($queryBuilder);
+                
                 (clone $filter)
-                    ->setColumn($this->columns[$_filter['column']])
+                    ->setColumn($column)
                     ->setValue($_filter['val'])
                     ->apply($queryBuilder);
             }
