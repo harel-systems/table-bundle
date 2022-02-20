@@ -138,7 +138,7 @@ abstract class Column
         $this->buttons[$identifier] = $button;
     }
     
-    protected function addFilterJoins($queryBuilder)
+    public function addFilterJoins($queryBuilder)
     {
         foreach($this->options['filterJoin'] as $def => $selector) {
             $queryBuilder->join($def, $selector);
