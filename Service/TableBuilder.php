@@ -292,6 +292,13 @@ class TableBuilder
         return array_values($header);
     }
     
+    public function getExportColumns($pagination)
+    {
+        return array_values(array_filter($this->getOrderedColumns($pagination), function($column) {
+            return $column->getDisplayable() && $column->getDisplay(true);
+        }));
+    }
+    
     public function serializeHeader($pagination)
     {
         return array_map(function($column) {
@@ -572,12 +579,9 @@ class TableBuilder
         
         $this->sortQueryBuilder($queryBuilder, $pagination);
         
-        $columns = $this->getOrderedColumns($pagination);
+        $columns = $this->getExportColumns($pagination);
         $firstRow = array();
         foreach($columns as $column) {
-            if(!$column->getDisplayable() || !$column->getDisplay(true)) {
-                continue;
-            }
             $firstRow[$column->getIdentifier()] = $column->getTitle();
         }
         
@@ -601,9 +605,6 @@ class TableBuilder
                 $row = new Row($entry);
                 
                 foreach($columns as $column) {
-                    if(!$column->getDisplayable() || !$column->getDisplay(true)) {
-                        continue;
-                    }
                     $column->getExportData($row);
                 }
                 
