@@ -44,6 +44,11 @@ class EntityColumn extends LinkColumn
         return /** @Ignore */$this->translator->trans($message, $params, $domain);
     }
     
+    public function getFilterSelector()
+    {
+        return $this->options['matchingFilterSelector'] ?? parent::getFilterSelector();
+    }
+    
     public function getFilterEntityIdentifier()
     {
         return $this->options['filterEntityIdentifier'] ?? $this->options['selector'];
@@ -128,6 +133,7 @@ class EntityColumn extends LinkColumn
                 'filterCallback' => null,
                 'filteringCallback' => null,
                 'filterEntityIdentifier' => null,
+                'matchingFilterSelector' => null,
                 'slugFilter' => false,
                 'matchingFilter' => true,
                 'sortSelector' => function(Options $options) {
