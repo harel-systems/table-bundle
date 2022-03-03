@@ -35,9 +35,9 @@ class CheckboxColumn extends BaseColumn
         return $column;
     }
     
-    public function getExportData(Row $row)
+    public function getExportData(Row $row, $format)
     {
-        return parent::getExportData($row) ? '1' : '0';
+        return parent::getExportData($row, $format) ? '1' : '0';
     }
     
     public function configureOptions(OptionsResolver $resolver)

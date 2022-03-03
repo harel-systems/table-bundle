@@ -94,7 +94,7 @@ abstract class Column
         
         // Normalize value
         if($export && $this->options['exportNormalizer'] !== null) {
-            $value = call_user_func($this->options['exportNormalizer'], $value, $row);
+            $value = call_user_func($this->options['exportNormalizer'], $value, $row, $export);
         } elseif($this->options['normalizer'] !== null) {
             $value = call_user_func($this->options['normalizer'], $value, $row);
         }
@@ -107,9 +107,9 @@ abstract class Column
         $row->add($this->identifier, $this->getRowValue($row, $export), $export);
     }
     
-    public function getExportData(Row $row)
+    public function getExportData(Row $row, $format)
     {
-        return $this->getRowData($row, true);
+        return $this->getRowData($row, $format);
     }
     
     public function getFilterPlaceholder()

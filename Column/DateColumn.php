@@ -51,15 +51,19 @@ class DateColumn extends TextColumn
                 return $value;
             },
             'defaultSortOrder' => 'DESC',
-            'exportNormalizer' => function($value) {
-                return self::getExportCell($value);
+            'exportNormalizer' => function($value, $row, $format) {
+                return self::getExportCell($value, $format);
             },
         ));
     }
     
-    static function getExportCell($value)
+    static function getExportCell($value, $format = null)
     {
-        $value = $value === null ? null : (is_string($value) ? new \DateTime($value) : $value)->format('Y-m-d');
+        $value = $value === null ? null : (is_string($value) ? new \DateTime($value) : $value);
+        
+        if($format === 'csv') {
+            return WriterEntityFactory::createCell($value ? $value->format('Y-m-d') : null);
+        }
         
         $style = (new StyleBuilder())
             ->setFormat('yyyy-mm-dd')

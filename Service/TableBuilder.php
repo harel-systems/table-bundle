@@ -605,11 +605,11 @@ class TableBuilder
                 $row = new Row($entry);
                 
                 foreach($columns as $column) {
-                    $column->getExportData($row);
+                    $column->getExportData($row, $options['format']);
                 }
                 
                 foreach($this->exportNormalizers as $normalizer) {
-                    call_user_func($normalizer, $row, true);
+                    call_user_func($normalizer, $row, $options['format']);
                 }
                 
                 $rowData = $row->serializeForExport();
