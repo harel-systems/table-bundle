@@ -66,7 +66,11 @@ class DateColumn extends TextColumn
     {
         $value = $value === null ? null : (is_string($value) ? new \DateTime($value) : $value)->format('Y-m-d');
         
-        return WriterEntityFactory::createCell($value);
+        $style = (new StyleBuilder())
+            ->setFormat('yyyy-mm-dd')
+            ->build();
+        
+        return WriterEntityFactory::createCell($value, $style);
     }
     
     public function getApplicableFilters(string $value)
