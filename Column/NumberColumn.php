@@ -12,8 +12,8 @@
 namespace Harel\TableBundle\Column;
 
 use Harel\TableBundle\Model\Column as BaseColumn;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use OpenSpout\Writer\Common\Creator\Style\StyleBuilder;
+use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NumberColumn extends BaseColumn

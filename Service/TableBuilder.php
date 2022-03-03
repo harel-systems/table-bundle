@@ -15,7 +15,7 @@ use Harel\TableBundle\Model\Column;
 use Harel\TableBundle\Model\Filter;
 use Harel\TableBundle\Model\Footer;
 use Harel\TableBundle\Model\Row;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
@@ -551,7 +551,7 @@ class TableBuilder
     public function export($queryBuilder, $pagination, $options = array())
     {
         if(!class_exists(WriterEntityFactory::class)) {
-            throw new \Exception(strtr('Class %class% is missing. To export table, you need to add %package% as a dependency.', array('%class%' => WriterEntityFactory::class, '%package%' => 'box/spout')));
+            throw new \Exception(strtr('Class %class% is missing. To export table, you need to add %package% as a dependency.', array('%class%' => WriterEntityFactory::class, '%package%' => 'openspout/openspout')));
         }
         
         $options = array_merge(array(

@@ -12,9 +12,9 @@
 namespace Harel\TableBundle\Column;
 
 use Harel\TableBundle\Filter\DateFilter;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use OpenSpout\Writer\Common\Creator\Style\StyleBuilder;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DateColumn extends TextColumn
@@ -52,11 +52,6 @@ class DateColumn extends TextColumn
             },
             'defaultSortOrder' => 'DESC',
             'exportNormalizer' => function($value) {
-                // NOTE Normally, we should be able to just use a \DateTime as the value, which would
-                //      automatically create a cell with the right type for XLSX/ODS, but there
-                //      is an issue (https://github.com/box/spout/issues/662) with Box/Spout
-                //      that prevents that, so for now we have to use a string cell.
-                
                 return self::getExportCell($value);
             },
         ));

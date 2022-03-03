@@ -11,8 +11,8 @@
 
 namespace Harel\TableBundle\Model;
 
-use Box\Spout\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 
 class Row
 {
