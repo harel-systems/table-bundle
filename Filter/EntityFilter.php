@@ -36,9 +36,10 @@ class EntityFilter extends BaseFilter
         if($this->column->getSlugFilter()) {
             $conditions = [];
             foreach($values as $value) {
-                $category = $this->column->getEntity($value);
-                $conditions[] = $queryBuilder->expr()->like($this->column->getSelector() . '.slug', ':slug' . $category->getId());
-                $queryBuilder->setParameter('slug' . $category->getId(), $category->getSlug() . '%');
+                if(null !== $category = $this->column->getEntity($value)) {
+                    $conditions[] = $queryBuilder->expr()->like($this->column->getSelector() . '.slug', ':slug' . $category->getId());
+                    $queryBuilder->setParameter('slug' . $category->getId(), $category->getSlug() . '%');
+                }
             }
             $queryBuilder->andWhere($queryBuilder->expr()->orX(...$conditions));
             return;
