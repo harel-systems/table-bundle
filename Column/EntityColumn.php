@@ -82,7 +82,7 @@ class EntityColumn extends LinkColumn
         try {
             $results = $queryBuilder->getQuery()->getResult();
         } catch(\Exception $e) {
-            throw new \Exception('An error occurred while looking for entities with the following query: ' . $queryBuilder->getQuery()->getDQL());
+            throw new \Exception('An error occurred while looking for entities with the following query: ' . $queryBuilder->getQuery()->getDQL() . PHP_EOL . $e->getMessage());
         }
         
         foreach($results as $result) {
