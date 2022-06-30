@@ -330,6 +330,10 @@ class TableBuilder
                 }
                 if(!isset($_filter['start'])) {
                     switch($_filter['val']) {
+                        case 'next_day':
+                            $start = new \DateTime('tomorrow');
+                            $end = new \DateTime('tomorrow');
+                            break;
                         case 'this_day':
                             $start = new \DateTime();
                             $end = new \DateTime();
