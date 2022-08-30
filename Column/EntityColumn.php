@@ -18,7 +18,7 @@ use Harel\TableBundle\Filter\TextFilter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class EntityColumn extends LinkColumn
