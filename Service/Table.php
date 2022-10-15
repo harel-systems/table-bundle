@@ -243,7 +243,7 @@ abstract class Table
                     $data[$key] = isset($data[$key]) ? (int)$data[$key] : ($modifier === '!' ? 0 : null);
                     break;
                 case 'bool':
-                    $data[$key] = isset($data[$key]) ? ($data[$key] === 'true' ? true : false) : ($modifier === '!' ? false : null);
+                    $data[$key] = isset($data[$key]) ? ($data[$key] === 'true' || $data[$key] === true ? true : false) : ($modifier === '!' ? false : null);
                     break;
                 case 'date':
                     $data[$key] = isset($data[$key]) && $data[$key] ? new \DateTime($data[$key]) : null;
