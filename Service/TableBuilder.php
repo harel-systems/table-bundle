@@ -77,6 +77,50 @@ class TableBuilder
         return $this;
     }
     
+    public function addBefore($source, $identifier, $class, $options)
+    {
+        if(isset($this->columns[$identifier])) {
+            throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
+        }
+        if(!isset($this->columns[$source])) {
+            throw new \Exception('Column with identifier ' . $identifier . ' doesn\'t exist in this table');
+        }
+        
+        $column = (clone ($this->columnLocator->has($class) ? $this->columnLocator->get($class) : new $class()))
+            ->setIdentifier($identifier)
+            ->setOptions($options);
+        
+        $index = array_search($source, array_keys($this->columns));
+        
+        $this->columns = array_slice($this->columns, 0, $index, true) +
+            array($identifier => $column) +
+            array_slice($this->columns, $index, NULL, true);
+        
+        return $this;
+    }
+    
+    public function addAfter($source, $identifier, $class, $options)
+    {
+        if(isset($this->columns[$identifier])) {
+            throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
+        }
+        if(!isset($this->columns[$source])) {
+            throw new \Exception('Column with identifier ' . $identifier . ' doesn\'t exist in this table');
+        }
+        
+        $column = (clone ($this->columnLocator->has($class) ? $this->columnLocator->get($class) : new $class()))
+            ->setIdentifier($identifier)
+            ->setOptions($options);
+        
+        $index = array_search($source, array_keys($this->columns)) + 1;
+        
+        $this->columns = array_slice($this->columns, 0, $index, true) +
+            array($identifier => $column) +
+            array_slice($this->columns, $index, NULL, true);
+        
+        return $this;
+    }
+    
     /**
      * @deprecated
      */
