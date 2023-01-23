@@ -62,6 +62,11 @@ abstract class Column
         return $this->options['title'];
     }
     
+    public function supportsImport()
+    {
+        return $this->options['import'];
+    }
+    
     public function setOptions(array $options)
     {
         $resolver = new OptionsResolver();
@@ -266,6 +271,7 @@ abstract class Column
                 'maxWidth' => null,
                 'minWidth' => null,
                 'history' => false,
+                'import' => false,
             ))
             ->setAllowedTypes('filter', ['boolean', 'array'])
             ->setAllowedTypes('sort', ['boolean'])

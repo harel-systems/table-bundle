@@ -343,6 +343,13 @@ class TableBuilder
         }));
     }
     
+    public function getImportColumns()
+    {
+        return array_values(array_filter($this->columns, function(Column $column) {
+            return $column->supportsImport();
+        }));
+    }
+    
     public function serializeHeader($pagination)
     {
         return array_map(function($column) {
