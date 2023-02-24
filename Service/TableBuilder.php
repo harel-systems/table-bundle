@@ -613,6 +613,7 @@ class TableBuilder
             'format' => 'xlsx',
             'batchCallback' => null,
             'file' => null,
+            'noHeader' => false,
         ), $options);
         
         switch($options['format']) {
@@ -635,13 +636,16 @@ class TableBuilder
         $this->sortQueryBuilder($queryBuilder, $pagination);
         
         $columns = $this->getExportColumns($pagination);
-        $firstRow = array();
-        foreach($columns as $column) {
-            $firstRow[$column->getIdentifier()] = $column->getTitle();
-        }
         
-        $row = WriterEntityFactory::createRowFromArray($firstRow);
-        $writer->addRow($row);
+        if(!$options['noHeader']) {
+            $firstRow = array();
+            foreach($columns as $column) {
+                $firstRow[$column->getIdentifier()] = $column->getTitle();
+            }
+            
+            $row = WriterEntityFactory::createRowFromArray($firstRow);
+            $writer->addRow($row);
+        }
         
         $this->filterData($queryBuilder, $pagination['filters'] ?: []);
         
