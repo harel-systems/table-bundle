@@ -86,7 +86,7 @@ class EntityColumn extends LinkColumn
         }
         
         foreach($results as $result) {
-            $filters[] = array(
+            $filters[] = array_filter(array(
                 'title' => $this->options['title'],
                 'class' => EntityFilter::class,
                 'column' => $this->identifier,
@@ -94,7 +94,9 @@ class EntityColumn extends LinkColumn
                 'val' => $result->getId(),
                 'label' => (string)$result,
                 'multiple' => true,
-            );
+                'img' => $this->getFilterImage($result),
+                'icon' => $this->getFilterIcon($result),
+            ));
         }
         
         if($this->options['nullFilter'] !== false) {
@@ -106,6 +108,7 @@ class EntityColumn extends LinkColumn
                 'val' => 'null',
                 'label' => $this->options['nullFilter'],
                 'multiple' => true,
+                'icon' => $this->getFilterIcon(null),
             );
         }
         
@@ -118,6 +121,7 @@ class EntityColumn extends LinkColumn
                 'val' => $value,
                 'label' => $this->trans('Matching "%query%"', array('%query%' => (string)$value), 'HarelTableBundle'),
                 'multiple' => true,
+                'icon' => $this->getFilterIcon((string)$value),
             );
         }
         

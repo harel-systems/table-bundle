@@ -103,7 +103,7 @@ abstract class Column
         } elseif($this->options['normalizer'] !== null) {
             $value = call_user_func($this->options['normalizer'], $value, $row);
         }
-        
+    
         return $value;
     }
     
@@ -221,6 +221,21 @@ abstract class Column
         return str_replace('.', '_', $this->getIdentifier()). '_' . $index;
     }
     
+    public function getFilterIcon($value)
+    {
+        return $this->options['filterIcon'] ?? null;
+    }
+    
+    public function getFilterImage($value)
+    {
+        return null;
+    }
+    
+    public function getFilterClassname($value)
+    {
+        return null;
+    }
+    
     public function getSortSelector($sortOption = null)
     {
         if($sortOption && isset($this->options['sortSelector'][$sortOption])) {
@@ -258,6 +273,7 @@ abstract class Column
                 'filterSelector' => null,
                 'filterJoin' => array(),
                 'filterLeftJoin' => array(),
+                'filterIcon' => null,
                 'export' => true,
                 'contentClassProperty' => null,
                 'selector' => function(Options $options) {

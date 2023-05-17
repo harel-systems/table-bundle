@@ -42,6 +42,9 @@ class Filter
             'filter' => static::class,
             'column' => $this->column->getIdentifier(),
             'value' => $this->value,
+            'icon' => $this->column->getFilterIcon($this->value),
+            'img' => $this->column->getFilterImage($this->value),
+            'className' => $this->column->getFilterClassname($this->value),
         );
     }
 }
