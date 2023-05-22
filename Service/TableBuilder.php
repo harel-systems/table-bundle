@@ -566,6 +566,7 @@ class TableBuilder
                 'excludes' => isset($filter['excludes']) ? $filter['excludes'] : [],
                 'value' => 'quick-' . $identifier,
                 'imgContent' => $filter['imgContent'] ?? null,
+                'className' => $filter['className'] ?? null,
                 'img' => $filter['img'] ?? null,
                 'icon' => $filter['icon'] ?? null,
             );
