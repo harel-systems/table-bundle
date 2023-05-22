@@ -77,7 +77,7 @@ abstract class Column
         return $this;
     }
     
-    protected function getRowValue(Row $row, $export = false)
+    protected function getRowValue(Row $row, $export = false, $normalized = true)
     {
         $value = null;
         
@@ -95,6 +95,10 @@ abstract class Column
             } else {
                 $value = null;
             }
+        }
+        
+        if(!$normalized) {
+            return $value;
         }
         
         // Normalize value
