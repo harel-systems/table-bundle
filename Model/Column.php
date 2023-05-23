@@ -20,7 +20,6 @@ abstract class Column
 {
     protected $identifier;
     protected $options = array();
-    protected $buttons = [];
     protected $filters = array();
     
     public function setIdentifier($identifier)
@@ -142,11 +141,6 @@ abstract class Column
         return [];
     }
     
-    public function addButton($identifier, $button)
-    {
-        $this->buttons[$identifier] = $button;
-    }
-    
     public function addFilterJoins($queryBuilder)
     {
         foreach($this->options['filterJoin'] as $def => $selector) {
@@ -170,11 +164,6 @@ abstract class Column
         }
         if($this->options['help'] !== null) {
             $column['help'] = $this->options['help'];
-        }
-        if(!empty($this->buttons)) {
-            foreach($this->buttons as $identifier => $button) {
-                $column['buttons'][$identifier] = $button->serialize();
-            }
         }
         if($this->options['input']) {
             $column['input'] = array();
