@@ -21,6 +21,7 @@ class Row
     
     private $values = array();
     private $links = array();
+    private $icons = array();
     private $classes = array();
     
     private $rows = [];
@@ -110,6 +111,15 @@ class Row
         return $this;
     }
     
+    public function addIcon(string $column, string $name, array $options)
+    {
+        $this->icons[$column][] = array_merge(array(
+            'name' => $name,
+        ), $options);
+        
+        return $this;
+    }
+    
     public function addClass(string $class)
     {
         $this->classes[] = $class;
@@ -126,6 +136,8 @@ class Row
         if(!empty($this->classes)) {
             $row['_class'] = implode(' ', $this->classes);
         }
+        
+        $row['_icons'] = $this->icons;
         
         return $row;
     }
