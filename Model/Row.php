@@ -137,7 +137,7 @@ class Row
             $row['_class'] = implode(' ', $this->classes);
         }
         
-        $row['_icons'] = $this->icons;
+        $row['_icons'] = array_merge($row['_icons'] ?? array(), $this->icons);
         
         return $row;
     }
