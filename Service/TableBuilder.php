@@ -653,17 +653,11 @@ class TableBuilder
         
         $this->filterData($queryBuilder, $pagination['filters'] ?: []);
         
-        $total = (new Paginator($queryBuilder))->count();
-        $start = 0;
-        $step = 100;
-        
-        while($start <= $total) {
-            $query = $queryBuilder
-                ->setFirstResult($start)
-                ->setMaxResults($step)
-                ->getQuery();
+        if(isset($this->params['pagination']) && !$this->params['pagination']) {
+            $result = $queryBuilder
+                ->getQuery()
+                ->getResult();
                 
-            $result = new Paginator($query);
             foreach($result as $entry) {
                 $row = new Row($entry);
                 
@@ -682,12 +676,45 @@ class TableBuilder
                     $writer->addRow($row);
                 }
             }
+            
             $this->em->clear();
+        } else {
+            $total = (new Paginator($queryBuilder))->count();
+            $start = 0;
+            $step = 100;
             
-            $start += $step;
-            
-            if($options['batchCallback']) {
-                call_user_func($options['batchCallback'], $start, $total);
+            while($start <= $total) {
+                $query = $queryBuilder
+                    ->setFirstResult($start)
+                    ->setMaxResults($step)
+                    ->getQuery();
+                    
+                $result = new Paginator($query);
+                foreach($result as $entry) {
+                    $row = new Row($entry);
+                    
+                    foreach($columns as $column) {
+                        $column->getExportData($row, $options['format']);
+                    }
+                    
+                    foreach($this->exportNormalizers as $normalizer) {
+                        call_user_func($normalizer, $row, $options['format']);
+                    }
+                    
+                    $rowData = $row->serializeForExport();
+                    
+                    foreach($rowData as $entry) {
+                        $row = WriterEntityFactory::createRow($entry);
+                        $writer->addRow($row);
+                    }
+                }
+                $this->em->clear();
+                
+                $start += $step;
+                
+                if($options['batchCallback']) {
+                    call_user_func($options['batchCallback'], $start, $total);
+                }
             }
         }
         
