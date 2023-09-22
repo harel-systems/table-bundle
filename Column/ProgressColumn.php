@@ -40,6 +40,17 @@ class ProgressColumn extends TextColumn
         ;
     }
     
+    protected function getRowValue(Row $row, $export = false, $normalized = true)
+    {
+        $value = parent::getRowValue($row, $export, $normalized);
+        
+        if($export) {
+            return $value['text'] ?? '';
+        }
+        
+        return $value;
+    }
+    
     public function serialize()
     {
         $column = parent::serialize();
