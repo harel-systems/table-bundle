@@ -47,6 +47,7 @@ class TextColumn extends BaseColumn
             if($this->options['multiline']) {
                 $column['input']['multiline'] = true;
             }
+            $column['input']['placeholder'] = $this->options['placeholder'];
         }
         
         return $column;
