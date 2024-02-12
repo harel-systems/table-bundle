@@ -13,7 +13,6 @@ namespace Harel\TableBundle\Column;
 
 use Harel\TableBundle\Filter\DateFilter;
 use OpenSpout\Writer\Common\Creator\Style\StyleBuilder;
-use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

@@ -12,7 +12,6 @@
 namespace Harel\TableBundle\Service;
 
 use Harel\TableBundle\Model\Column;
-use Harel\TableBundle\Model\Filter;
 use Harel\TableBundle\Model\Footer;
 use Harel\TableBundle\Model\Row;
 use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
@@ -381,10 +380,6 @@ class TableBuilder
                 }
                 if(!isset($_filter['start'])) {
                     switch($_filter['val']) {
-                        case 'next_day':
-                            $start = new \DateTime('tomorrow');
-                            $end = new \DateTime('tomorrow');
-                            break;
                         case 'this_day':
                             $start = new \DateTime();
                             $end = new \DateTime();
@@ -416,6 +411,24 @@ class TableBuilder
                             break;
                         case 'last_year':
                             $date = new \DateTime('last year');
+                            $start = new \DateTime($date->format('Y-01-01'));
+                            $end = new \DateTime($date->format('Y-12-31'));
+                            break;
+                        case 'next_day':
+                            $start = new \DateTime('tomorrow');
+                            $end = new \DateTime('tomorrow');
+                            break;
+                        case 'next_week':
+                            $start = new \DateTime('monday next week');
+                            $end = new \DateTime('sunday next week');
+                            break;
+                        case 'next_month':
+                            $date = new \DateTime('next month');
+                            $start = new \DateTime($date->format('Y-m-01'));
+                            $end = new \DateTime($date->format('Y-m-t'));
+                            break;
+                        case 'next_year':
+                            $date = new \DateTime('next year');
                             $start = new \DateTime($date->format('Y-01-01'));
                             $end = new \DateTime($date->format('Y-12-31'));
                             break;

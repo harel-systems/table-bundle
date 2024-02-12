@@ -11,22 +11,15 @@
 
 namespace Harel\TableBundle\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Parameter;
 use Harel\TableBundle\Event\TableBuiltEvent;
 use Harel\TableBundle\Event\TableQueryBuiltEvent;
 use Harel\TableBundle\Service\TableBuilder;
 use Spatie\Url\Url;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
