@@ -11,8 +11,9 @@
 
 namespace Harel\TableBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Harel\TableBundle\DependencyInjection\HarelTableExtension;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @author Maxime Corteel <maxime.corteel@harelsystems.com>
@@ -23,7 +24,7 @@ class TableBundle extends Bundle
      * FIXME This class should be loaded automatically, but it doesn't work
      * @see https://symfony.com/doc/4.4/bundles/extension.html
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new HarelTableExtension();
     }

@@ -19,6 +19,7 @@ use Spatie\Url\Url;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -86,19 +87,12 @@ abstract class Table
         }
         
         if($request !== null) {
-            $requestConfig = $request->query->get('p', array());
-            
-            // The sort column is sent as "by" by the front-end
-            if(isset($requestConfig['by'])) {
-                $requestConfig['sort'] = $requestConfig['by'];
-            }
-            if(null !== $_templateConfig = $request->query->get('template')) {
-                $requestConfig['template'] = $_templateConfig == 1;
-            }
-            
+            $requestConfig = $request->request->all('_table_pagination') ?? array();
+            $request->request->remove('_table_pagination');
             // Convert header configuration to a non-associative array
             if(null !== $_headerConfig = $request->query->get('h')) {
-                foreach($_headerConfig as $identifier => $display) {
+                foreach(explode(';', $_headerConfig) as $column) {
+                    list($identifier, $display) = explode(':', $column);
                     $requestConfig['header'][] = array(
                         'identifier' => $identifier,
                         'display' => $display,
@@ -137,8 +131,8 @@ abstract class Table
             'filters' => [],
             'header' => [],
             'template' => false,
-            'by' => null,
         ));
+        $resolver->setNormalizer('template', fn(Options $options, $value) => $value == 1);
     }
     
     public function setUrl(string $url)
@@ -210,7 +204,7 @@ abstract class Table
         
         $_dataOnly = $request->query->get('_data');
         
-        if($request->getMethod() !== 'POST') {
+        if($request->getMethod() !== 'POST' || empty($request->request->all())) {
             $_data = $this->tableBuilder->serializeAggregatedData(clone $queryBuilder, false, $_dataOnly);
             
             $this->tableBuilder->filterData($queryBuilder, $pagination['filters']);
