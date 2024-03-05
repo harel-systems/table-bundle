@@ -631,6 +631,8 @@ class TableBuilder
             'batchCallback' => null,
             'file' => null,
             'noHeader' => false,
+            'enclosure' => '"',
+            'delimiter' => ',',
         ), $options);
         
         switch($options['format']) {
@@ -643,6 +645,8 @@ class TableBuilder
             case 'csv':
             default:
                 $writer = WriterEntityFactory::createCSVWriter();
+                $writer->setFieldEnclosure($options['enclosure']);
+                $writer->setFieldDelimiter($options['delimiter']);
                 break;
         }
         
