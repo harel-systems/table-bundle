@@ -496,7 +496,7 @@ class TableBuilder
         $query = $queryBuilder->getQuery();
         
         if($this->params['pagination']) {
-            $paginator = new Paginator($query);
+            $paginator = new Paginator($query, false);
             
             if($this->params['pagination_total'] && $paginator->count() < ($pagination['page'] - 1) * $pagination['count']) {
                 $pagination['page'] = 1;
