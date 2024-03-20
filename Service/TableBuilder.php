@@ -497,7 +497,7 @@ class TableBuilder
         $query = $queryBuilder->getQuery();
         
         if($this->params['pagination']) {
-            $paginator = new Paginator($query, $this->params['paginatorFetchJoin']);
+            $paginator = new Paginator($query, $this->params['paginatorFetchJoin'] ?? true);
             
             if($this->params['pagination_total'] && $paginator->count() < ($pagination['page'] - 1) * $pagination['count']) {
                 $pagination['page'] = 1;
@@ -697,7 +697,7 @@ class TableBuilder
             
             $this->em->clear();
         } else {
-            $total = (new Paginator($queryBuilder, $this->params['paginatorFetchJoin']))->count();
+            $total = (new Paginator($queryBuilder, $this->params['paginatorFetchJoin'] ?? true))->count();
             $start = 0;
             $step = 100;
             
@@ -707,7 +707,7 @@ class TableBuilder
                     ->setMaxResults($step)
                     ->getQuery();
                     
-                $result = new Paginator($query, $this->params['paginatorFetchJoin']);
+                $result = new Paginator($query, $this->params['paginatorFetchJoin'] ?? true);
                 foreach($result as $entry) {
                     $row = new Row($entry);
                     
@@ -773,12 +773,12 @@ class TableBuilder
             return array('prev' => null, 'next' => null);
         }
         
-        $countTotal = (new Paginator($queryBuilder, $this->params['paginatorFetchJoin']))->count();
+        $countTotal = (new Paginator($queryBuilder, $this->params['paginatorFetchJoin'] ?? true))->count();
         
         if($order === 'DESC') {
             $countBefore = (new Paginator((clone $queryBuilder)
                 ->andWhere($orderCriteria . ' > :nav_id')
-                ->setParameter('nav_id', $criteriaValue), $this->params['paginatorFetchJoin']))->count();
+                ->setParameter('nav_id', $criteriaValue), $this->params['paginatorFetchJoin'] ?? true))->count();
             
             try {
                 $prevId = (clone $queryBuilder)
@@ -806,7 +806,7 @@ class TableBuilder
         } else {
             $countBefore = (new Paginator((clone $queryBuilder)
                 ->andWhere($orderCriteria . ' < :nav_id')
-                ->setParameter('nav_id', $criteriaValue), $this->params['paginatorFetchJoin']))->count();
+                ->setParameter('nav_id', $criteriaValue), $this->params['paginatorFetchJoin'] ?? true))->count();
             
             try {
                 $nextId = (clone $queryBuilder)
