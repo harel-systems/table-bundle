@@ -131,7 +131,7 @@ class Row
     {
         $row = $this->values;
         
-        $row['links'] = $this->links;
+        $row['links'] = array_merge_recursive($row['links'] ?? array(), $this->links);
         
         if(!empty($this->classes)) {
             $row['_class'] = implode(' ', $this->classes);
