@@ -18,7 +18,6 @@ use Harel\TableBundle\Service\TableBuilder;
 use Spatie\Url\Url;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -106,11 +105,7 @@ abstract class Table
             
         $resolver = new OptionsResolver();
         $this->configurePagination($resolver);
-        try {
-            $this->pagination = $resolver->resolve(array_merge($oldConfig, $requestConfig));
-        } catch(UndefinedOptionsException $e) {
-            $this->pagination = $resolver->resolve(array());
-        }
+        $this->pagination = $resolver->resolve(array_merge($oldConfig, $requestConfig));
         
         $this->pagination['count'] = (int)$this->pagination['count'];
         $this->pagination['page'] = (int)$this->pagination['page'];
@@ -132,7 +127,9 @@ abstract class Table
             'header' => [],
             'template' => false,
         ));
-        $resolver->setNormalizer('template', fn(Options $options, $value) => $value == 1);
+        $resolver
+            ->setNormalizer('template', fn(Options $options, $value) => $value == 1)
+            ->setIgnoreUndefined(true);
     }
     
     public function setUrl(string $url)
