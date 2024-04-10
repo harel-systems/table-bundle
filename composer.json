@@ -12,7 +12,13 @@
         }
     ],
     "require": {
-        "php": ">=7.3"
+        "php": ">=8.1",
+        "symfony/security-bundle": ">=6.3",
+        "symfony/dependency-injection": ">=6.3",
+        "symfony/http-foundation": ">=6.3",
+        "symfony/routing": ">=6.3",
+        "symfony/event-dispatcher": ">=6.3",
+        "doctrine/orm": ">=2.0"
     },
     "require-dev": {
         
