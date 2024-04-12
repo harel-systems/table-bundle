@@ -1,11 +1,14 @@
-<?xml version="1.0"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-    <file source-language="en" datatype="plaintext" original="file.ext">
-        <body>
-            <trans-unit id="1">
-                <source>Matching "%query%"</source>
-                <target>Matching "%query%"</target>
-            </trans-unit>
-        </body>
-    </file>
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-US" target-language="en" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="_4SBkSF" resname="Matching &quot;%query%&quot;">
+        <source>Matching "%query%"</source>
+        <target>Matching "%query%"</target>
+      </trans-unit>
+    </body>
+  </file>
 </xliff>
