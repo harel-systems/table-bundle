@@ -17,6 +17,10 @@ class ConstantFilter extends BaseFilter
 {
     public function apply($queryBuilder)
     {
+        if(null !== $filter = $this->column->getFilteringCallback()) {
+            $filter($queryBuilder, $this->value);
+            return;
+        }
         $identifier = $this->column->getFilterValuePlaceholder($this);
         $queryBuilder
             ->andWhere($this->column->getFilterSelector() . ' IN (:' . $identifier. ')')

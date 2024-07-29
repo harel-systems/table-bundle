@@ -229,6 +229,11 @@ abstract class Column
         return null;
     }
     
+    public function getFilteringCallback()
+    {
+        return null;
+    }
+    
     public function getSortSelector($sortOption = null)
     {
         if($sortOption && isset($this->options['sortSelector'][$sortOption])) {
