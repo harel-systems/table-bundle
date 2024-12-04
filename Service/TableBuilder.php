@@ -499,18 +499,17 @@ class TableBuilder
         if($this->params['pagination'] && $this->params['pagination_total']) {
             $paginator = new Paginator($query, $this->params['paginatorFetchJoin'] ?? true);
             
-            if($paginator->count() < ($pagination['page'] - 1) * $pagination['count']) {
+            $pagination['total'] = $paginator->count();
+            if($pagination['total'] < ($pagination['page'] - 1) * $pagination['count']) {
                 $pagination['page'] = 1;
                 return $this->serializeData($queryBuilder, $pagination);
             }
-        } else {
-            $paginator = $query->getResult();
         }
         
         
         $data = [];
         
-        foreach($paginator as $i => $entry) {
+        foreach($query->getResult() as $i => $entry) {
             $row = new Row($entry);
             
             if($this->rowFilter !== null && !call_user_func($this->rowFilter, $row)) {
@@ -533,10 +532,6 @@ class TableBuilder
             }
             
             $data[] = $row->serialize() + array('__index' => $i);
-        }
-        
-        if($this->params['pagination'] && $this->params['pagination_total']) {
-            $pagination['total'] = $paginator->count();
         }
         
         return $data;
