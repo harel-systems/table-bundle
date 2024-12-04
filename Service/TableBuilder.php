@@ -496,10 +496,10 @@ class TableBuilder
         
         $query = $queryBuilder->getQuery();
         
-        if($this->params['pagination']) {
+        if($this->params['pagination'] && $this->params['pagination_total']) {
             $paginator = new Paginator($query, $this->params['paginatorFetchJoin'] ?? true);
             
-            if($this->params['pagination_total'] && $paginator->count() < ($pagination['page'] - 1) * $pagination['count']) {
+            if($paginator->count() < ($pagination['page'] - 1) * $pagination['count']) {
                 $pagination['page'] = 1;
                 return $this->serializeData($queryBuilder, $pagination);
             }
