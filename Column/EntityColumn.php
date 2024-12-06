@@ -135,6 +135,7 @@ class EntityColumn extends LinkColumn
         $resolver
             ->setDefaults(array(
                 'filterCallback' => null,
+                'label' => null,
                 'filteringCallback' => null,
                 'filterEntityIdentifier' => null,
                 'matchingFilterSelector' => null,
@@ -148,6 +149,17 @@ class EntityColumn extends LinkColumn
             ->setRequired(['class', 'selector'])
             ->setAllowedTypes('class', ['string'])
             ->setAllowedTypes('filterCallback', ['callable', 'null']);
+    }
+    
+    public function serialize()
+    {
+        $column = parent::serialize();
+        
+        if($this->options['label'] !== null) {
+            $column['label'] = $this->options['label'];
+        }
+        
+        return $column;
     }
     
     public function getFilteringCallback()
