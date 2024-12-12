@@ -11,6 +11,7 @@
 
 namespace Harel\TableBundle\Filter;
 
+use Doctrine\ORM\QueryBuilder;
 use Harel\TableBundle\Model\Filter as BaseFilter;
 
 class TextFilter extends BaseFilter
@@ -24,6 +25,13 @@ class TextFilter extends BaseFilter
     
     public function apply($queryBuilder)
     {
+        if(null !== $filter = $this->column->getFilteringCallback()) {
+            $queryBuilder = $filter($queryBuilder, $this->value);
+            if(!$queryBuilder instanceof QueryBuilder) {
+                return;
+            }
+        }
+
         $identifier = $this->column->getFilterValuePlaceholder($this);
         $value = is_array($this->value) ? $this->value : [$this->value];
         

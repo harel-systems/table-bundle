@@ -12,6 +12,7 @@
 namespace Harel\TableBundle\Filter;
 
 use Harel\TableBundle\Model\Filter as BaseFilter;
+use Doctrine\ORM\QueryBuilder;
 
 class EntityFilter extends BaseFilter
 {
@@ -26,8 +27,10 @@ class EntityFilter extends BaseFilter
     public function apply($queryBuilder)
     {
         if(null !== $filter = $this->column->getFilteringCallback()) {
-            $filter($queryBuilder, $this->value);
-            return;
+            $queryBuilder = $filter($queryBuilder, $this->value);
+            if(!$queryBuilder instanceof QueryBuilder) {
+                return;
+            }
         }
         
         $identifier = $this->column->getFilterValuePlaceholder($this);
