@@ -269,6 +269,7 @@ class TableBuilder
             'tableClassName' => null,
             'exportDisabled' => false,
             'paginatorFetchJoin' => true,
+            'forcePaginator' => false,
         ));
     }
     
@@ -504,6 +505,12 @@ class TableBuilder
                 $pagination['page'] = 1;
                 return $this->serializeData($queryBuilder, $pagination);
             }
+        }
+
+        if($this->params['forcePaginator']) {
+            $results = $paginator;
+        } else {
+            $results = $query->getResult();
         }
         
         
