@@ -516,7 +516,7 @@ class TableBuilder
         
         $data = [];
         
-        foreach($query->getResult() as $i => $entry) {
+        foreach($results as $i => $entry) {
             $row = new Row($entry);
             
             if($this->rowFilter !== null && !call_user_func($this->rowFilter, $row)) {
