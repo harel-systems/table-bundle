@@ -245,6 +245,7 @@ abstract class Table
             'pagination' => $pagination,
             'params' => $this->tableBuilder->serializeParams(),
             'footer' => $this->tableBuilder->serializeFooter(),
+            'mods' => $this->tableBuilder->serializeMods(),
         );
         
         if(isset($additionalData)) {

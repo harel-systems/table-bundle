@@ -52,7 +52,7 @@ class TableBuilder
     private $quickFilters = array();
     private $dateFilters = array();
     private $footer = null;
-    private $mods = array();
+    private array $mods = array();
     
     private $dataNormalizers = array();
     private $exportNormalizers = array();
@@ -199,6 +199,17 @@ class TableBuilder
         }
         
         return $this->footer->addGroup($priority);
+    }
+    
+    public function addMod(string $type, array $options)
+    {
+        $this->mods[$type][] = $options;
+        return $this;
+    }
+
+    public function serializeMods(): array
+    {
+        return $this->mods;
     }
     
     public function resetBuild()
