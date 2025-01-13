@@ -12,6 +12,8 @@
 namespace Harel\TableBundle\Service;
 
 use Doctrine\ORM\Query\Parameter;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Harel\TableBundle\Event\TableBuiltEvent;
 use Harel\TableBundle\Event\TableQueryBuiltEvent;
 use Harel\TableBundle\Service\TableBuilder;
@@ -25,19 +27,19 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 abstract class Table
 {
-    protected $tableBuilder;
-    protected $dispatcher = null;
-    protected $pagination;
-    protected $configUpdated = false;
-    protected $url = null;
-    protected $options = null;
+    protected TableBuilder $tableBuilder;
+    protected ?EventDispatcherInterface $dispatcher = null;
+    protected array $pagination;
+    protected bool $configUpdated = false;
+    protected string $url = null;
+    protected ?array $options = null;
     
-    const RESERVED_QUERY_PARAMETERS = ['h', 's', '_data'];
+    private const RESERVED_QUERY_PARAMETERS = ['h', 's', '_data'];
     
     /**
      * @required
      */
-    public function setTableBuilder(TableBuilder $tableBuilder)
+    public function setTableBuilder(TableBuilder $tableBuilder): void
     {
         $this->tableBuilder = $tableBuilder;
     }
@@ -45,7 +47,7 @@ abstract class Table
     /**
      * @required
      */
-    public function setEventDispatcher(?EventDispatcherInterface $eventDispatcher)
+    public function setEventDispatcher(?EventDispatcherInterface $eventDispatcher): void
     {
         $this->dispatcher = $eventDispatcher;
     }
@@ -57,7 +59,7 @@ abstract class Table
         }
     }
     
-    public function setOptions(array $options)
+    public function setOptions(array $options): static
     {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -70,12 +72,12 @@ abstract class Table
         
     }
     
-    protected function getCurrentConfig()
+    protected function getCurrentConfig(): bool
     {
         return false;
     }
     
-    protected function updatePagination(Request $request = null)
+    protected function updatePagination(Request $request = null): void
     {
         $oldConfig = $this->getCurrentConfig();
         
@@ -115,7 +117,7 @@ abstract class Table
         $this->configUpdated = $oldConfig !== json_encode($this->pagination);
     }
     
-    public function configurePagination(OptionsResolver $resolver)
+    public function configurePagination(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'count' => 25,
@@ -132,12 +134,14 @@ abstract class Table
             ->setIgnoreUndefined(true);
     }
     
-    public function setUrl(string $url)
+    public function setUrl(string $url): static
     {
         $this->url = $url;
+
+        return $this;
     }
     
-    protected function getUrl(string $format, $parameters = null)
+    protected function getUrl(string $format, $parameters = null): string
     {
         if($this->url === null || is_array($parameters)) {
             $url = Url::fromString($this->request_stack->getCurrentRequest()->getUri());
@@ -173,7 +177,7 @@ abstract class Table
         throw new MethodNotAllowedException(['GET'], 'This table doesn\'t support posting a form.');
     }
     
-    public function handleRequest(Request $request)
+    public function handleRequest(Request $request): array|JsonResponse
     {
         if($this->options === null) {
             $this->setOptions(array());
@@ -262,7 +266,7 @@ abstract class Table
         return $data;
     }
     
-    public function getNavigation($id)
+    public function getNavigation($id): array
     {
         $this->setOptions(array());
         
@@ -280,7 +284,7 @@ abstract class Table
         return $this->tableBuilder->getNavigation($id, $queryBuilder, $this->pagination);
     }
     
-    public function getSelection($property = 'DISTINCT o.id')
+    public function getSelection($property = 'DISTINCT o.id'): array
     {
         $this->tableBuilder->resetBuild();
         $this->build($this->tableBuilder);
@@ -296,14 +300,12 @@ abstract class Table
         return $this->tableBuilder->getSelection($queryBuilder, $this->pagination, $property);
     }
     
-    public function getSelectionFromString($selection, $property = 'DISTINCT o.id')
+    public function getSelectionFromString($selection, $property = 'DISTINCT o.id'): array
     {
-        switch($selection) {
-            case 'all':
-                return $this->getSelection($property);
-            default:
-                return explode(',', $selection);
+        if($selection === 'all') {
+            return $this->getSelection($property);
         }
+        return explode(',', $selection);
     }
     
     protected function getAppliedFilters()
@@ -311,7 +313,7 @@ abstract class Table
         return  $this->pagination['filters'] ?: [];
     }
     
-    protected function getAggregationQueryBuilder($queryBuilder, string $class, string $selector, string $inSelector, array $params = array(), array $joins = array())
+    protected function getAggregationQueryBuilder($queryBuilder, string $class, string $selector, string $inSelector, array $params = array(), array $joins = array()): QueryBuilder
     {
         $queryBuilder = clone $queryBuilder;
         $parameters = $queryBuilder->getParameters();
@@ -336,7 +338,7 @@ abstract class Table
         return $_queryBuilder;
     }
     
-    protected function getAggregationQuery($queryBuilder, $selector, $params = array(), $joins = array())
+    protected function getAggregationQuery($queryBuilder, $selector, $params = array(), $joins = array()): Query
     {
         return $this->getAggregationQueryBuilder($queryBuilder, $queryBuilder->getRootEntities()[0], $selector, '_a_.id', $params, $joins)->getQuery();
     }

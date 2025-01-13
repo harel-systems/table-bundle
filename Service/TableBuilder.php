@@ -13,6 +13,7 @@ namespace Harel\TableBundle\Service;
 
 use Harel\TableBundle\Model\Column;
 use Harel\TableBundle\Model\Footer;
+use Harel\TableBundle\Model\Footer\Group;
 use Harel\TableBundle\Model\Row;
 use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,22 +47,22 @@ class TableBuilder
         return true;
     }
     
-    private $params = array();
-    private $permissions = array();
-    private $columns = array();
-    private $quickFilters = array();
-    private $dateFilters = array();
-    private $footer = null;
+    private array $params = array();
+    private array $permissions = array();
+    private array $columns = array();
+    private array $quickFilters = array();
+    private array $dateFilters = array();
+    private ?Footer $footer = null;
     private array $mods = array();
     
-    private $dataNormalizers = array();
-    private $exportNormalizers = array();
-    private $preAggregators = array();
-    private $postAggregators = array();
-    private $rowLinkGetter = null;
-    private $rowFilter = null;
+    private array $dataNormalizers = array();
+    private array $exportNormalizers = array();
+    private array $preAggregators = array();
+    private array $postAggregators = array();
+    private ?\Closure $rowLinkGetter = null;
+    private ?\Closure $rowFilter = null;
     
-    public function add($identifier, $class, $options)
+    public function add($identifier, $class, $options): static
     {
         if(isset($this->columns[$identifier])) {
             throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
@@ -76,7 +77,7 @@ class TableBuilder
         return $this;
     }
     
-    public function addBefore($source, $identifier, $class, $options)
+    public function addBefore($source, $identifier, $class, $options): static
     {
         if(isset($this->columns[$identifier])) {
             throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
@@ -98,7 +99,7 @@ class TableBuilder
         return $this;
     }
     
-    public function addAfter($source, $identifier, $class, $options)
+    public function addAfter($source, $identifier, $class, $options): static
     {
         if(isset($this->columns[$identifier])) {
             throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
@@ -120,27 +121,27 @@ class TableBuilder
         return $this;
     }
     
-    public function addQuickFilter($identifier, $definition)
+    public function addQuickFilter($identifier, $definition): static
     {
         $this->quickFilters[$identifier] = $definition;
         
         return $this;
     }
     
-    public function addFilter($identifier, $class, $definition)
+    public function addFilter($identifier, $class, $definition): static
     {
         $definition['filterOnly'] = true;
         return $this->add($identifier, $class, $definition);
     }
     
-    public function addDateFilter($identifier, $definition)
+    public function addDateFilter($identifier, $definition): static
     {
         $this->dateFilters[$identifier] = $definition;
         
         return $this;
     }
     
-    public function addNormalizer(callable $normalizer, $export = false)
+    public function addNormalizer(callable $normalizer, $export = false): static
     {
         $this->dataNormalizers[] = $normalizer;
         
@@ -151,28 +152,28 @@ class TableBuilder
         return $this;
     }
     
-    public function addRowLink(callable $rowLinkGetter)
+    public function addRowLink(\Closure $rowLinkGetter): static
     {
         $this->rowLinkGetter = $rowLinkGetter;
         
         return $this;
     }
     
-    public function addRowFilter(callable $rowFilter)
+    public function addRowFilter(\Closure $rowFilter): static
     {
         $this->rowFilter = $rowFilter;
         
         return $this;
     }
     
-    public function addExportNormalizer(callable $normalizer)
+    public function addExportNormalizer(callable $normalizer): static
     {
         $this->exportNormalizers[] = $normalizer;
         
         return $this;
     }
     
-    public function addAggregator(callable $aggregator, $postFiltering = false)
+    public function addAggregator(callable $aggregator, $postFiltering = false): static
     {
         if($postFiltering) {
             $this->postAggregators[] = $aggregator;
@@ -183,16 +184,18 @@ class TableBuilder
         return $this;
     }
     
-    public function addFooterButton($identifier, $type, $icon, $label, $priority, $options = array())
+    public function addFooterButton($identifier, $type, $icon, $label, $priority, $options = array()): static
     {
         if($this->footer === null) {
             $this->footer = new Footer();
         }
         
         $this->footer->addButton($type, $icon, $label, $priority, array_merge(array('identifier' => $identifier), $options));
+
+        return $this;
     }
     
-    public function addFooterButtonGroup($priority)
+    public function addFooterButtonGroup($priority): Group
     {
         if($this->footer === null) {
             $this->footer = new Footer();
@@ -201,7 +204,7 @@ class TableBuilder
         return $this->footer->addGroup($priority);
     }
     
-    public function addMod(string $type, array $options)
+    public function addMod(string $type, array $options): static
     {
         $this->mods[$type][] = $options;
         return $this;
@@ -225,7 +228,7 @@ class TableBuilder
         $this->footer = null;
     }
     
-    public function setParams(array $params)
+    public function setParams(array $params): static
     {
         $params = array_merge($this->params, $params);
         $resolver = new OptionsResolver();
@@ -236,19 +239,19 @@ class TableBuilder
         return $this;
     }
     
-    public function setPermissions(array $permissions)
+    public function setPermissions(array $permissions): static
     {
         $this->permissions = $permissions;
         
         return $this;
     }
     
-    public function getPermissions()
+    public function getPermissions(): array
     {
         return $this->permissions;
     }
     
-    public function configureParams(OptionsResolver $resolver)
+    public function configureParams(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
             'sortable' => true,
@@ -271,12 +274,12 @@ class TableBuilder
         ));
     }
     
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
     
-    public function serializeFooter()
+    public function serializeFooter(): ?array
     {
         if($this->footer === null) {
             return null;
@@ -285,14 +288,14 @@ class TableBuilder
         return $this->footer->toArray();
     }
     
-    public function getFilterPlaceholders()
+    public function getFilterPlaceholders(): array
     {
         return array_filter(array_map(function($column) {
             return $column->getFilterPlaceholder();
         }, $this->columns));
     }
     
-    public function serializeParams()
+    public function serializeParams(): array
     {
         return array(
             'sortable' => $this->params['sortable'],
@@ -312,7 +315,7 @@ class TableBuilder
         );
     }
     
-    public function getOrderedColumns($pagination)
+    public function getOrderedColumns($pagination): array
     {
         $header = array();
         
@@ -335,28 +338,28 @@ class TableBuilder
         return array_values($header);
     }
     
-    public function getExportColumns($pagination)
+    public function getExportColumns($pagination): array
     {
         return array_values(array_filter($this->getOrderedColumns($pagination), function($column) {
             return $column->getDisplayable() && $column->getDisplay(true);
         }));
     }
     
-    public function getImportColumns()
+    public function getImportColumns(): array
     {
         return array_values(array_filter($this->columns, function(Column $column) {
             return $column->supportsImport();
         }));
     }
     
-    public function serializeHeader($pagination)
+    public function serializeHeader($pagination): array
     {
         return array_map(function($column) {
             return $column->serialize();
         }, $this->getOrderedColumns($pagination));
     }
     
-    public function filterData(&$queryBuilder, $filters)
+    public function filterData(&$queryBuilder, $filters): void
     {
         $_filters = [];
         foreach($filters as $filter) {
@@ -463,7 +466,7 @@ class TableBuilder
         }
     }
     
-    private function sortQueryBuilder($queryBuilder, $pagination)
+    private function sortQueryBuilder($queryBuilder, $pagination): void
     {
         if($pagination['sort'] && isset($this->columns[$pagination['sort']])) {
             $column = $this->columns[$pagination['sort']];
@@ -483,7 +486,7 @@ class TableBuilder
         }
     }
     
-    public function serializeData($queryBuilder, &$pagination)
+    public function serializeData($queryBuilder, &$pagination): array
     {
         if($this->params['pagination']) {
             $queryBuilder
@@ -542,7 +545,7 @@ class TableBuilder
         return $data;
     }
     
-    public function serializeAggregatedData($queryBuilder, $postFiltering = false, $_data = null)
+    public function serializeAggregatedData($queryBuilder, $postFiltering = false, $_data = null): array
     {
         $data = array();
         if($postFiltering) {
@@ -558,7 +561,7 @@ class TableBuilder
         return $data;
     }
     
-    public function serializeFilters(string $query)
+    public function serializeFilters(string $query): array
     {
         $filters = [];
         
@@ -569,7 +572,7 @@ class TableBuilder
         return $filters;
     }
     
-    public function serializeQuickFilters()
+    public function serializeQuickFilters(): array
     {
         $filters = array();
         foreach($this->quickFilters as $identifier => $filter) {
@@ -589,7 +592,7 @@ class TableBuilder
         return $filters;
     }
     
-    public function serializeDefaultQuickFilters()
+    public function serializeDefaultQuickFilters(): array
     {
         $filters = array();
         foreach($this->quickFilters as $identifier => $filter) {
@@ -607,7 +610,7 @@ class TableBuilder
         return $filters;
     }
     
-    public function serializeDateFilters()
+    public function serializeDateFilters(): array
     {
         $dateFilters = [];
         foreach($this->dateFilters as $identifier => $filter) {
@@ -741,7 +744,7 @@ class TableBuilder
         return $file;
     }
     
-    public function getNavigation($id, $queryBuilder, $pagination)
+    public function getNavigation($id, $queryBuilder, $pagination): array
     {
         if($id === null) {
             return array('prev' => null, 'next' => null);
@@ -841,7 +844,7 @@ class TableBuilder
         );
     }
     
-    public function getSelection($queryBuilder, $pagination, $property = 'DISTINCT o.id')
+    public function getSelection($queryBuilder, $pagination, $property = 'DISTINCT o.id'): array
     {
         $queryBuilder->select($property);
         
