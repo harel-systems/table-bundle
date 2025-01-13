@@ -72,7 +72,7 @@ abstract class Table
         
     }
     
-    protected function getCurrentConfig(): bool
+    protected function getCurrentConfig()
     {
         return false;
     }
