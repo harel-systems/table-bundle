@@ -50,9 +50,9 @@ class TableBuilder
     private $permissions = array();
     private $columns = array();
     private $quickFilters = array();
-    private $filters = array();
     private $dateFilters = array();
     private $footer = null;
+    private $mods = array();
     
     private $dataNormalizers = array();
     private $exportNormalizers = array();
@@ -116,19 +116,6 @@ class TableBuilder
         $this->columns = array_slice($this->columns, 0, $index, true) +
             array($identifier => $column) +
             array_slice($this->columns, $index, NULL, true);
-        
-        return $this;
-    }
-    
-    /**
-     * @deprecated
-     */
-    public function addButton($column, $identifier, $class, $options)
-    {
-        if(!isset($this->columns[$column])) {
-            throw new \Exception('Button identifier should match an existing column, got ' . $column . ' instead');
-        }
-        $this->columns[$column]->addButton($identifier, new $class($options));
         
         return $this;
     }
