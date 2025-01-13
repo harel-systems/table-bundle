@@ -20,6 +20,7 @@ use Harel\TableBundle\Service\TableBuilder;
 use Spatie\Url\Url;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -177,7 +178,7 @@ abstract class Table
         throw new MethodNotAllowedException(['GET'], 'This table doesn\'t support posting a form.');
     }
     
-    public function handleRequest(Request $request): array|JsonResponse
+    public function handleRequest(Request $request): array|Response
     {
         if($this->options === null) {
             $this->setOptions(array());
