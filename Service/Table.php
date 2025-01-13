@@ -31,7 +31,7 @@ abstract class Table
     protected ?EventDispatcherInterface $dispatcher = null;
     protected array $pagination;
     protected bool $configUpdated = false;
-    protected string $url = null;
+    protected ?string $url = null;
     protected ?array $options = null;
     
     private const RESERVED_QUERY_PARAMETERS = ['h', 's', '_data'];
