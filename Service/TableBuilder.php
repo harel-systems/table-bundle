@@ -702,7 +702,8 @@ class TableBuilder
         } else {
             $total = (new Paginator($queryBuilder, $this->params['paginatorFetchJoin'] ?? true))->count();
             $start = 0;
-            $step = min(100, $total);
+            $step = 100;
+            $treatedRows = 0;
             
             while($start <= $total) {
                 $query = $queryBuilder
@@ -732,9 +733,10 @@ class TableBuilder
                 $this->em->clear();
                 
                 $start += $step;
+                $treatedRows++;
                 
                 if($options['batchCallback']) {
-                    call_user_func($options['batchCallback'], $start, $total);
+                    call_user_func($options['batchCallback'], $treatedRows, $total);
                 }
             }
         }
