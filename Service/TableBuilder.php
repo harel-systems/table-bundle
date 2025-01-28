@@ -703,6 +703,7 @@ class TableBuilder
             $total = (new Paginator($queryBuilder, $this->params['paginatorFetchJoin'] ?? true))->count();
             $start = 0;
             $step = 100;
+            $processedRows = 0;
             
             while($start <= $total) {
                 $query = $queryBuilder
@@ -728,13 +729,16 @@ class TableBuilder
                         $row = WriterEntityFactory::createRow($entry);
                         $writer->addRow($row);
                     }
+
+
                 }
                 $this->em->clear();
-                
+
+                $processedRows += count($result);
                 $start += $step;
                 
                 if($options['batchCallback']) {
-                    call_user_func($options['batchCallback'], $start, $total);
+                    call_user_func($options['batchCallback'], $processedRows, $total);
                 }
             }
         }
