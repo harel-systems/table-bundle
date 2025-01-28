@@ -734,7 +734,7 @@ class TableBuilder
                 }
                 $this->em->clear();
 
-                $processedRows+= count($result);
+                $processedRows += count($result);
                 $start += $step;
                 
                 if($options['batchCallback']) {
