@@ -702,7 +702,7 @@ class TableBuilder
         } else {
             $total = (new Paginator($queryBuilder, $this->params['paginatorFetchJoin'] ?? true))->count();
             $start = 0;
-            $step = 100;
+            $step = min(100, $total);
             
             while($start <= $total) {
                 $query = $queryBuilder
