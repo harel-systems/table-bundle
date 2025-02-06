@@ -491,9 +491,9 @@ class TableBuilder
             $queryBuilder
                 ->setFirstResult(($pagination['page'] - 1) * $pagination['count'])
                 ->setMaxResults($pagination['count']);
-            
-            $this->sortQueryBuilder($queryBuilder, $pagination);
         }
+        
+        $this->sortQueryBuilder($queryBuilder, $pagination);
         
         $query = $queryBuilder->getQuery();
         
