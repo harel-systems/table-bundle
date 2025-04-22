@@ -20,6 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\Options;
 
 class TableBuilder
 {
@@ -258,6 +259,9 @@ class TableBuilder
             'filterable' => true,
             'filterPlaceholder' => null,
             'pagination' => true,
+            'export_pagination' => function(Options $options) {
+                return $options['pagination'];
+            },
             'pagination_total' => true,
             'sidebar' => false,
             'selection' => 'single',
@@ -674,7 +678,7 @@ class TableBuilder
         
         $this->filterData($queryBuilder, $pagination['filters'] ?: []);
         
-        if(isset($this->params['pagination']) && !$this->params['pagination']) {
+        if(!$this->params['export_pagination']) {
             $result = $queryBuilder
                 ->getQuery()
                 ->getResult();
