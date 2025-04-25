@@ -15,13 +15,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Button
 {
-    private $className = null;
-    private $icon = null;
-    private $title = null;
-    private $priority = null;
-    private $options = array();
+    private string $className;
+    private string $icon;
+    private string $title;
+    private int $priority;
+    private array $options = array();
     
-    public function __construct($className, $icon, $title, $priority, $options = array())
+    public function __construct(string $className, string $icon, string $title, int $priority, array $options = array())
     {
         $this->className = $className;
         $this->icon = $icon;
@@ -37,7 +37,6 @@ class Button
     {
         $resolver
             ->setDefaults(array(
-                'formName' => null,
                 'name' => null,
                 'url' => null,
                 'target' => null,

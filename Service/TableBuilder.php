@@ -185,7 +185,7 @@ class TableBuilder
         return $this;
     }
     
-    public function addFooterButton($identifier, $type, $icon, $label, $priority, $options = array()): static
+    public function addFooterButton(string $identifier, string $type, string $icon, string $label, int $priority, array $options = array()): static
     {
         if($this->footer === null) {
             $this->footer = new Footer();
@@ -196,13 +196,22 @@ class TableBuilder
         return $this;
     }
     
-    public function addFooterButtonGroup($priority): Group
+    public function addFooterButtonGroup(int $priority, ?string $key = null): Group
     {
         if($this->footer === null) {
             $this->footer = new Footer();
         }
         
-        return $this->footer->addGroup($priority);
+        return $this->footer->addGroup($priority, $key);
+    }
+    
+    public function getFooter(): Footer
+    {
+        if($this->footer === null) {
+            $this->footer = new Footer();
+        }
+        
+        return $this->footer;
     }
     
     public function addMod(string $type, array $options): static

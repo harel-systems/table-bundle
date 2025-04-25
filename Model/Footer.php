@@ -25,26 +25,30 @@ class Footer
         $this->formName = $formName;
     }
     
-    public function addButton($className, $icon, $title, int $priority, $options = array())
+    public function addButton(string $className, string $icon, string $title, int $priority, array $options = array())
     {
         $options = array_merge(array(
-            'formName' => $this->formName,
+            'identifier' => null,
         ), $options);
         
         $button = new Button($className, $icon, $title, $priority, $options);
         
-        $this->buttons[] = $button;
+        if($options['identifier'] === null) {
+            $this->buttons[] = $button;
+        } else {
+            $this->buttons[$options['identifier']] = $button;
+        }
     }
     
-    public function addGroup($priority, $options = array())
+    public function addGroup(int $priority, ?string $identifier = null)
     {
-        $options = array_merge(array(
-            'formName' => $this->formName,
-        ), $options);
+        $group = new Group($priority);
         
-        $group = new Group($priority, $options);
-        
-        $this->buttons[] = $group;
+        if($identifier === null) {
+            $this->buttons[] = $group;
+        } else {
+            $this->buttons[$identifier] = $group;
+        }
         
         return $group;
     }
@@ -67,5 +71,16 @@ class Footer
             }
         }
         return $array;
+    }
+
+    public function get(string $key): Button|Group|null
+    {
+        return $this->buttons[$key] ?? null;
+    }
+
+    public function remove(string $key): static
+    {
+        unset($this->buttons[$key]);
+        return $this;
     }
 }

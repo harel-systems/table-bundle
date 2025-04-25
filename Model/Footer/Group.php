@@ -13,40 +13,54 @@ namespace Harel\TableBundle\Model\Footer;
 
 class Group
 {
-    private $buttons = [];
-    private $priority;
-    private $formName;
+    private array $buttons = array();
+    private int $priority;
     
-    public function __construct($priority, $options = array())
+    public function __construct(int $priority)
     {
         $this->priority = $priority;
-        $this->formName = $options['formName'];
     }
     
-    public function addButton($class, $icon, $title, $priority, $options = array())
+    public function addButton(string $className, string $icon, string $title, string $priority, array $options = array())
     {
         $options = array_merge(array(
-            'formName' => $this->formName,
+            'identifier' => null,
         ), $options);
         
-        $button = new Button($class, $icon, $title, $priority, $options);
+        $button = new Button($className, $icon, $title, $priority, $options);
         
-        $this->buttons[] = $button;
+        if($options['identifier'] === null) {
+            $this->buttons[] = $button;
+        } else {
+            $this->buttons[$options['identifier']] = $button;
+        }
     }
     
     public function toArray()
     {
-        usort($this->buttons, function($a, $b) {
+        $buttons = array_values($this->buttons);
+        usort($buttons, function($a, $b) {
             return $a->getPriority() - $b->getPriority();
         });
-        foreach($this->buttons as $i => $button) {
-            $this->buttons[$i] = $button->toArray();
+        foreach($buttons as $i => $button) {
+            $buttons[$i] = $button->toArray();
         }
-        return $this->buttons;
+        return $buttons;
     }
     
-    public function getPriority()
+    public function getPriority(): int
     {
         return $this->priority;
+    }
+
+    public function get(string $key): ?Button
+    {
+        return $this->buttons[$key] ?? null;
+    }
+
+    public function remove(string $key): static
+    {
+        unset($this->buttons[$key]);
+        return $this;
     }
 }
