@@ -132,6 +132,11 @@ class Row
         $row = $this->values;
         
         $row['links'] = array_merge_recursive($row['links'] ?? array(), $this->links);
+
+        if(empty($row['links'])) {
+            // NOTE Ensures that JSON representation is an object and not an empty array
+            $row['links'] = (object)[];
+        }
         
         if(!empty($this->classes)) {
             $row['_class'] = implode(' ', $this->classes);
