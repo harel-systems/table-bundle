@@ -19,6 +19,7 @@ use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\Options;
 
@@ -62,6 +63,7 @@ class TableBuilder
     private array $postAggregators = array();
     private ?\Closure $rowLinkGetter = null;
     private ?\Closure $rowFilter = null;
+    private array $postHandlers = array();
     
     public function add($identifier, $class, $options): static
     {
@@ -223,6 +225,24 @@ class TableBuilder
     public function serializeMods(): array
     {
         return $this->mods;
+    }
+    
+    public function addPostHandler(callable $handler): static
+    {
+        $this->postHandlers[] = $handler;
+        return $this;
+    }
+
+    public function handlePostRequest(Request $request, $queryBuilder): array
+    {
+        $data = array();
+        foreach($this->postHandlers as $handler) {
+            $data = array(
+                ...$data,
+                call_user_func($handler, $request, $queryBuilder)
+            );
+        }
+        return $data;
     }
     
     public function resetBuild()

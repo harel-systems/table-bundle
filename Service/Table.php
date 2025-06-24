@@ -217,7 +217,7 @@ abstract class Table
             // NOTE Also, the table itself must be rebuilt because the build stage typically depends
             //      on the underlying data for editable tables
             $this->tableBuilder->filterData($queryBuilder, $pagination['filters']);
-            $additionalData = $this->handlePostRequest($request, $queryBuilder);
+            $additionalData = $this->tableBuilder->handlePostRequest($request, $queryBuilder);
             
             // Rebuild table with new data
             $this->tableBuilder->resetBuild();
