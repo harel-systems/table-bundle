@@ -227,7 +227,7 @@ class TableBuilder
         return $this->mods;
     }
     
-    public function addPostHandler(callable $handler): static
+    public function addPostHandler(callable|array|string $handler): static
     {
         $this->postHandlers[] = $handler;
         return $this;
