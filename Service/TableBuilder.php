@@ -237,8 +237,8 @@ class TableBuilder
     {
         $data = array();
         foreach($this->postHandlers as $handler) {
-            $data = array(
-                ...$data,
+            $data = array_merge(
+                $data,
                 call_user_func($handler, $request, $queryBuilder)
             );
         }
