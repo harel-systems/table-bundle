@@ -250,6 +250,7 @@ class TableBuilder
         $this->columns = array();
         $this->quickFilters = array();
         $this->dateFilters = array();
+        $this->mods = array();
         $this->dataNormalizers = [];
         $this->rowLinkGetter = null;
         $this->exportNormalizers = [];
