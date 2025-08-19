@@ -11,6 +11,7 @@
 
 namespace Harel\TableBundle\Column;
 
+use Harel\TableBundle\Filter\CurrencyFilter;
 use Harel\TableBundle\Model\Column as BaseColumn;
 use OpenSpout\Writer\Common\Creator\Style\StyleBuilder;
 use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
@@ -63,6 +64,7 @@ class NumberColumn extends BaseColumn
             'maximum' => null,
             'forceSign' => null,
             'decimals' => null,
+            'filter' => false,
             'exportNormalizer' => function($value) {
                 $style = (new StyleBuilder())
                     ->setFormat('0.00')
@@ -71,5 +73,39 @@ class NumberColumn extends BaseColumn
                 return WriterEntityFactory::createCell($value);
             },
         ));
+    }
+    
+    public function getApplicableFilters(string $value)
+    {
+        $value = str_replace(',', '.', $value);
+        if(is_numeric($value)) {
+            return [
+                array(
+                    'title' => $this->options['title'],
+                    'class' => CurrencyFilter::class,
+                    'column' => $this->identifier,
+                    'value' => $this->identifier . '.=.' . $value,
+                    'val' => '<' . (float)$value,
+                    'label' => strtr('%title% < %price%', array('%title%' => $this->options['title'], '%price%' => $value)),
+                ),
+                array(
+                    'title' => $this->options['title'],
+                    'class' => CurrencyFilter::class,
+                    'column' => $this->identifier,
+                    'value' => $this->identifier . '.<.' . $value,
+                    'val' => (float)$value,
+                    'label' => strtr('%title% = %price%', array('%title%' => $this->options['title'], '%price%' => $value)),
+                ),
+                array(
+                    'title' => $this->options['title'],
+                    'class' => CurrencyFilter::class,
+                    'column' => $this->identifier,
+                    'value' => $this->identifier . '.>.' . $value,
+                    'val' => '>' . (float)$value,
+                    'label' => strtr('%title% > %price%', array('%title%' => $this->options['title'], '%price%' => $value)),
+                ),
+            ];
+        }
+        return [];
     }
 }
