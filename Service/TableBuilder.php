@@ -25,6 +25,8 @@ use Symfony\Component\OptionsResolver\Options;
 
 class TableBuilder
 {
+    const COLORS = ['#0ca4f0ff', '#FFC870', '#ffbe9e', '#5db93eff', '#c285ffff', '#ffaaff'];
+
     private $em;
     private $columnLocator;
     private $filterLocator;
@@ -57,13 +59,14 @@ class TableBuilder
     private ?Footer $footer = null;
     private array $mods = array();
     
-    private array $dataNormalizers = array();
-    private array $exportNormalizers = array();
-    private array $preAggregators = array();
-    private array $postAggregators = array();
+    private array $dataNormalizers = [];
+    private array $exportNormalizers = [];
+    private array $preAggregators = [];
+    private array $postAggregators = [];
     private ?\Closure $rowLinkGetter = null;
     private ?\Closure $rowFilter = null;
-    private array $postHandlers = array();
+    private array $postHandlers = [];
+    private array $columnGroups = [];
     
     public function add($identifier, $class, $options): static
     {
@@ -86,7 +89,7 @@ class TableBuilder
             throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
         }
         if(!isset($this->columns[$source])) {
-            throw new \Exception('Column with identifier ' . $source . ' doesn\'t exist in this table');
+            throw new \Exception('Column with identifier ' . $identifier . ' doesn\'t exist in this table');
         }
         
         $column = (clone ($this->columnLocator->has($class) ? $this->columnLocator->get($class) : new $class()))
@@ -108,7 +111,7 @@ class TableBuilder
             throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
         }
         if(!isset($this->columns[$source])) {
-            throw new \Exception('Column with identifier ' . $source . ' doesn\'t exist in this table');
+            throw new \Exception('Column with identifier ' . $identifier . ' doesn\'t exist in this table');
         }
         
         $column = (clone ($this->columnLocator->has($class) ? $this->columnLocator->get($class) : new $class()))
@@ -121,6 +124,18 @@ class TableBuilder
             array($identifier => $column) +
             array_slice($this->columns, $index, NULL, true);
         
+        return $this;
+    }
+
+    public function addGroup(string $identifier, array $definition)
+    {
+        $this->columnGroups[] = array(
+            'identifier' => $identifier,
+            'color' => self::COLORS[count($this->columnGroups) % count(self::COLORS)],
+            'display' => true,
+            ...$definition,
+        );
+
         return $this;
     }
     
@@ -391,6 +406,11 @@ class TableBuilder
         return array_map(function($column) {
             return $column->serialize();
         }, $this->getOrderedColumns($pagination));
+    }
+    
+    public function serializeGroups($pagination): array
+    {
+        return $pagination['groups'] ?? $this->columnGroups;
     }
     
     public function filterData(&$queryBuilder, $filters): void

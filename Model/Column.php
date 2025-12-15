@@ -158,6 +158,7 @@ abstract class Column
             'title' => $this->options['title'],
             'display' => $this->options['display'],
             'identifier' => $this->identifier,
+            'group' => $this->options['group'],
         );
         if(!$this->options['sort']) {
             $column['sort'] = false;
@@ -286,6 +287,7 @@ abstract class Column
                 'minWidth' => null,
                 'history' => false,
                 'import' => false,
+                'group' => null,
             ))
             ->setAllowedTypes('filter', ['boolean', 'array'])
             ->setAllowedTypes('sort', ['boolean'])

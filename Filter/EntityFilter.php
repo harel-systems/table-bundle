@@ -26,6 +26,7 @@ class EntityFilter extends BaseFilter
     
     public function apply($queryBuilder)
     {
+
         if(null !== $filter = $this->column->getFilteringCallback()) {
             $queryBuilder = $filter($queryBuilder, $this->value);
             if(!$queryBuilder instanceof QueryBuilder) {

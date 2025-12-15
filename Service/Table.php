@@ -78,7 +78,7 @@ abstract class Table
         return false;
     }
     
-    protected function updatePagination(Request $request = null): void
+    protected function updatePagination(?Request $request = null): void
     {
         $oldConfig = $this->getCurrentConfig();
         
@@ -94,17 +94,17 @@ abstract class Table
             // Convert header configuration to a non-associative array
             if(null !== $_headerConfig = $request->query->get('h')) {
                 foreach(explode(';', $_headerConfig) as $column) {
-                    list($identifier, $display) = explode(':', $column);
+                    list($identifier, $display, $group) = explode(':', $column);
                     $requestConfig['header'][] = array(
                         'identifier' => $identifier,
                         'display' => $display,
+                        'group' => $group,
                     );
                 }
             }
         } else {
             $requestConfig = array();
         }
-        
             
         $resolver = new OptionsResolver();
         $this->configurePagination($resolver);
@@ -128,6 +128,7 @@ abstract class Table
             'order' => 'ASC',
             'filters' => [],
             'header' => [],
+            'groups' => null,
             'template' => false,
         ));
         $resolver
@@ -246,6 +247,7 @@ abstract class Table
             'data' => $this->tableBuilder->serializeData($queryBuilder, $pagination),
             '_data' => $_data,
             'columns' => $this->tableBuilder->serializeHeader($pagination),
+            'groups' => $this->tableBuilder->serializeGroups($pagination),
             'permissions' => $this->tableBuilder->getPermissions(),
             'pagination' => $pagination,
             'params' => $this->tableBuilder->serializeParams(),
