@@ -25,7 +25,7 @@ use Symfony\Component\OptionsResolver\Options;
 
 class TableBuilder
 {
-    const COLORS = ['#0ca4f0ff', '#FFC870', '#ffbe9e', '#5db93eff', '#c285ffff', '#ffaaff'];
+    const COLORS = ['#0CA4F0', '#FFC870', '#FFBE9E', '#5DB93E', '#C285FF', '#FFAAFF'];
 
     private $em;
     private $columnLocator;
