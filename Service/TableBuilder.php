@@ -631,15 +631,16 @@ class TableBuilder
         $filters = array();
         foreach($this->quickFilters as $identifier => $filter) {
             $filters[$identifier] = array(
-                'title' => isset($filter['title']) ? $filter['title'] : $filter['label'],
-                'label' => isset($filter['label']) ? $filter['label'] : $filter['title'],
+                'title' => $filter['title'] ?? $filter['label'],
+                'label' => $filter['label'] ?? $filter['title'],
                 'quick' => $identifier,
-                'excludes' => isset($filter['excludes']) ? $filter['excludes'] : [],
+                'excludes' => $filter['excludes'] ?? [],
                 'value' => 'quick-' . $identifier,
                 'imgContent' => $filter['imgContent'] ?? null,
                 'className' => $filter['className'] ?? null,
                 'img' => $filter['img'] ?? null,
                 'icon' => $filter['icon'] ?? null,
+                'color' => $filter['color'] ?? null,
             );
         }
         
