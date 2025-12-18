@@ -246,7 +246,7 @@ abstract class Table
         $data = array(
             'data' => $this->tableBuilder->serializeData($queryBuilder, $pagination),
             '_data' => $_data,
-            'columns' => $this->tableBuilder->serializeHeader($pagination),
+            'columns' => $this->normalizeHeader($this->tableBuilder->serializeHeader($pagination), $pagination),
             'groups' => $this->tableBuilder->serializeGroups($pagination),
             'permissions' => $this->tableBuilder->getPermissions(),
             'pagination' => $pagination,
@@ -267,6 +267,11 @@ abstract class Table
         $url = $data['params']['filter_url'];
         
         return $data;
+    }
+
+    protected function normalizeHeader(array $columns, array $pagination) : array
+    {
+        return $columns;
     }
     
     public function getNavigation($id): array
