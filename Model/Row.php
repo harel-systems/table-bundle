@@ -115,6 +115,7 @@ class Row
     {
         $this->icons[$column][] = array_merge(array(
             'name' => $name,
+            'static' => true,
         ), $options);
         
         return $this;
