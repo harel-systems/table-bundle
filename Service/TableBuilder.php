@@ -742,7 +742,7 @@ class TableBuilder
                 }
                 
                 foreach($this->exportNormalizers as $normalizer) {
-                    call_user_func($normalizer, $row, $options['format']);
+                    call_user_func($normalizer, $row, $options['format'], $queryBuilder);
                 }
                 
                 $rowData = $row->serializeForExport();
@@ -775,7 +775,7 @@ class TableBuilder
                     }
                     
                     foreach($this->exportNormalizers as $normalizer) {
-                        call_user_func($normalizer, $row, $options['format']);
+                        call_user_func($normalizer, $row, $options['format'], $queryBuilder);
                     }
                     
                     $rowData = $row->serializeForExport();
