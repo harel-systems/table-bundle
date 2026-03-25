@@ -12,7 +12,6 @@
 namespace Harel\TableBundle\Model;
 
 use OpenSpout\Common\Entity\Cell;
-use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 
 class Row
 {
@@ -158,7 +157,7 @@ class Row
         foreach($rows as $i => $cells) {
             foreach($cells as $key => $cell) {
                 if(!$cell instanceof Cell) {
-                    $rows[$i][$key] = WriterEntityFactory::createCell($cell ?? '');
+                    $rows[$i][$key] = Cell::fromValue($cell ?? '');
                 }
             }
         }

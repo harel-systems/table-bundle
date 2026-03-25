@@ -15,9 +15,13 @@ use Harel\TableBundle\Model\Column;
 use Harel\TableBundle\Model\Footer;
 use Harel\TableBundle\Model\Footer\Group;
 use Harel\TableBundle\Model\Row;
-use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use OpenSpout\Common\Entity\Row as EntityRow;
+use OpenSpout\Writer\CSV\Options as CSVOptions;
+use OpenSpout\Writer\XLSX\Writer as XLSXWriter;
+use OpenSpout\Writer\ODS\Writer as ODSWriter;
+use OpenSpout\Writer\CSV\Writer as CSVWriter;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -681,8 +685,8 @@ class TableBuilder
     
     public function export($queryBuilder, $pagination, $options = array())
     {
-        if(!class_exists(WriterEntityFactory::class)) {
-            throw new \Exception(strtr('Class %class% is missing. To export table, you need to add %package% as a dependency.', array('%class%' => WriterEntityFactory::class, '%package%' => 'openspout/openspout')));
+        if(!class_exists(ODSWriter::class)) {
+            throw new \Exception(strtr('Class %class% is missing. To export table, you need to add %package% as a dependency.', array('%class%' => ODSWriter::class, '%package%' => 'openspout/openspout')));
         }
         
         $options = array_merge(array(
@@ -696,16 +700,17 @@ class TableBuilder
         
         switch($options['format']) {
             case 'xlsx':
-                $writer = WriterEntityFactory::createXLSXWriter();
+                $writer = new XLSXWriter();
                 break;
             case 'ods':
-                $writer = WriterEntityFactory::createODSWriter();
+                $writer = new ODSWriter();
                 break;
             case 'csv':
             default:
-                $writer = WriterEntityFactory::createCSVWriter();
-                $writer->setFieldEnclosure($options['enclosure']);
-                $writer->setFieldDelimiter($options['delimiter']);
+                $writer = new CSVWriter(new CSVOptions(
+                    FIELD_DELIMITER: $options['delimiter'],
+                    FIELD_ENCLOSURE: $options['enclosure'],
+                ));
                 break;
         }
         
@@ -723,7 +728,7 @@ class TableBuilder
                 $firstRow[$column->getIdentifier()] = $column->getTitle();
             }
             
-            $row = WriterEntityFactory::createRowFromArray($firstRow);
+            $row = EntityRow::fromValues($firstRow);
             $writer->addRow($row);
         }
         
@@ -748,7 +753,7 @@ class TableBuilder
                 $rowData = $row->serializeForExport();
                 
                 foreach($rowData as $entry) {
-                    $row = WriterEntityFactory::createRow($entry);
+                    $row = EntityRow::fromValues($entry);
                     $writer->addRow($row);
                 }
             }
@@ -781,7 +786,7 @@ class TableBuilder
                     $rowData = $row->serializeForExport();
                     
                     foreach($rowData as $entry) {
-                        $row = WriterEntityFactory::createRow($entry);
+                        $row = new EntityRow(array_values($entry));
                         $writer->addRow($row);
                     }
 

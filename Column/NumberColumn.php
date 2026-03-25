@@ -13,8 +13,8 @@ namespace Harel\TableBundle\Column;
 
 use Harel\TableBundle\Filter\CurrencyFilter;
 use Harel\TableBundle\Model\Column as BaseColumn;
-use OpenSpout\Writer\Common\Creator\Style\StyleBuilder;
-use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Style\Style;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class NumberColumn extends BaseColumn
@@ -66,11 +66,11 @@ class NumberColumn extends BaseColumn
             'decimals' => null,
             'filter' => false,
             'exportNormalizer' => function($value) {
-                $style = (new StyleBuilder())
-                    ->setFormat('0.00')
-                    ->build();
+                $style = new Style(
+                    format: '0.00',
+                );
                 
-                return WriterEntityFactory::createCell($value);
+                return Cell::fromValue($value, $style);
             },
         ));
     }

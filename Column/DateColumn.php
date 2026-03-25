@@ -12,8 +12,8 @@
 namespace Harel\TableBundle\Column;
 
 use Harel\TableBundle\Filter\DateFilter;
-use OpenSpout\Writer\Common\Creator\Style\StyleBuilder;
-use OpenSpout\Writer\Common\Creator\WriterEntityFactory;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Style\Style;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DateColumn extends TextColumn
@@ -61,14 +61,14 @@ class DateColumn extends TextColumn
         $value = $value === null ? null : (is_string($value) ? new \DateTime($value) : $value);
         
         if($format === 'csv') {
-            return WriterEntityFactory::createCell($value ? $value->format('Y-m-d') : null);
+            return Cell::fromValue($value ? $value->format('Y-m-d') : null);
         }
         
-        $style = (new StyleBuilder())
-            ->setFormat('yyyy-mm-dd')
-            ->build();
+        $style = new Style(
+            format: 'yyyy-mm-dd',
+        );
         
-        return WriterEntityFactory::createCell($value, $style);
+        return Cell::fromValue($value, $style);
     }
     
     public function getApplicableFilters(string $value)
