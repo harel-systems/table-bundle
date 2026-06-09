@@ -16,6 +16,7 @@ use Harel\TableBundle\Model\Footer;
 use Harel\TableBundle\Model\Footer\Group;
 use Harel\TableBundle\Model\Row;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use OpenSpout\Common\Entity\Row as EntityRow;
 use OpenSpout\Writer\CSV\Options as CSVOptions;
@@ -31,25 +32,21 @@ class TableBuilder
 {
     const COLORS = ['#0CA4F0', '#FFC870', '#FFBE9E', '#5DB93E', '#C285FF', '#FFAAFF'];
 
-    private $em;
-    private $columnLocator;
-    private $filterLocator;
-    
-    public function __construct(EntityManagerInterface $em, ServiceLocator $columnLocator, ServiceLocator $filterLocator)
-    {
-        $this->em = $em;
-        $this->columnLocator = $columnLocator;
-        $this->filterLocator = $filterLocator;
-    }
+    public function __construct(
+        private EntityManagerInterface $em,
+        private ServiceLocator $columnLocator,
+        private ServiceLocator $filterLocator,
+    ) {}
     
     /**
      * NOTE These functions are here only to support the serializeDateFilters method.
      * TODO find a solution to extract date filter generation
      */
-    private function trans($string, $placeholders = array(), $domain = 'Base')
+    private function trans(string $string, array $placeholders = array(), string $domain = 'Base')
     {
         return strtr($string, $placeholders);
     }
+
     private function isGranted($role)
     {
         return true;
@@ -72,7 +69,7 @@ class TableBuilder
     private array $postHandlers = [];
     private array $columnGroups = [];
     
-    public function add($identifier, $class, $options): static
+    public function add(string $identifier, string $class, array $options): static
     {
         if(isset($this->columns[$identifier])) {
             throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
@@ -87,7 +84,18 @@ class TableBuilder
         return $this;
     }
     
-    public function addBefore($source, $identifier, $class, $options): static
+    public function remove(string $identifier): static
+    {
+        if(!isset($this->columns[$identifier])) {
+            throw new \Exception('Column ' . $identifier . ' does not exist in this table');
+        }
+        
+        unset($this->columns[$identifier]);
+        
+        return $this;
+    }
+    
+    public function addBefore(string $source, string $identifier, string $class, array $options): static
     {
         if(isset($this->columns[$identifier])) {
             throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
@@ -109,7 +117,7 @@ class TableBuilder
         return $this;
     }
     
-    public function addAfter($source, $identifier, $class, $options): static
+    public function addAfter(string $source, string $identifier, string $class, array $options): static
     {
         if(isset($this->columns[$identifier])) {
             throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
@@ -143,27 +151,27 @@ class TableBuilder
         return $this;
     }
     
-    public function addQuickFilter($identifier, $definition): static
+    public function addQuickFilter(string $identifier, array $definition): static
     {
         $this->quickFilters[$identifier] = $definition;
         
         return $this;
     }
     
-    public function addFilter($identifier, $class, $definition): static
+    public function addFilter(string $identifier, string $class, array $definition): static
     {
         $definition['filterOnly'] = true;
         return $this->add($identifier, $class, $definition);
     }
     
-    public function addDateFilter($identifier, $definition): static
+    public function addDateFilter(string $identifier, array $definition): static
     {
         $this->dateFilters[$identifier] = $definition;
         
         return $this;
     }
     
-    public function addNormalizer(callable $normalizer, $export = false): static
+    public function addNormalizer(callable $normalizer, bool $export = false): static
     {
         $this->dataNormalizers[] = $normalizer;
         
@@ -252,7 +260,7 @@ class TableBuilder
         return $this;
     }
 
-    public function handlePostRequest(Request $request, $queryBuilder): array
+    public function handlePostRequest(Request $request, QueryBuilder $queryBuilder): array
     {
         $data = array();
         foreach($this->postHandlers as $handler) {
@@ -368,7 +376,7 @@ class TableBuilder
         );
     }
     
-    public function getOrderedColumns($pagination): array
+    public function getOrderedColumns(array $pagination): array
     {
         $header = array();
         
@@ -391,7 +399,7 @@ class TableBuilder
         return array_values($header);
     }
     
-    public function getExportColumns($pagination): array
+    public function getExportColumns(array $pagination): array
     {
         return array_values(array_filter($this->getOrderedColumns($pagination), function($column) {
             return $column->getDisplayable() && $column->getDisplay(true);
@@ -405,19 +413,19 @@ class TableBuilder
         }));
     }
     
-    public function serializeHeader($pagination): array
+    public function serializeHeader(array $pagination): array
     {
         return array_map(function($column) {
             return $column->serialize();
         }, $this->getOrderedColumns($pagination));
     }
     
-    public function serializeGroups($pagination): array
+    public function serializeGroups(array $pagination): array
     {
         return $pagination['groups'] ?? $this->columnGroups;
     }
     
-    public function filterData(&$queryBuilder, $filters): void
+    public function filterData(QueryBuilder &$queryBuilder, array $filters): void
     {
         $_filters = [];
         foreach($filters as $filter) {
@@ -524,7 +532,7 @@ class TableBuilder
         }
     }
     
-    private function sortQueryBuilder($queryBuilder, $pagination): void
+    private function sortQueryBuilder(QueryBuilder $queryBuilder, array $pagination): void
     {
         if($pagination['sort'] && isset($this->columns[$pagination['sort']])) {
             $column = $this->columns[$pagination['sort']];
@@ -544,7 +552,7 @@ class TableBuilder
         }
     }
     
-    public function serializeData($queryBuilder, &$pagination): array
+    public function serializeData(QueryBuilder $queryBuilder, array &$pagination): array
     {
         if($this->params['pagination']) {
             $queryBuilder
@@ -603,7 +611,7 @@ class TableBuilder
         return $data;
     }
     
-    public function serializeAggregatedData($queryBuilder, $postFiltering = false, $_data = null): array
+    public function serializeAggregatedData(QueryBuilder $queryBuilder, $postFiltering = false, $_data = null): array
     {
         $data = array();
         if($postFiltering) {
@@ -683,7 +691,7 @@ class TableBuilder
         return $dateFilters;
     }
     
-    public function export($queryBuilder, $pagination, $options = array())
+    public function export(QueryBuilder $queryBuilder, array $pagination, $options = array())
     {
         if(!class_exists(ODSWriter::class)) {
             throw new \Exception(strtr('Class %class% is missing. To export table, you need to add %package% as a dependency.', array('%class%' => ODSWriter::class, '%package%' => 'openspout/openspout')));
@@ -808,7 +816,7 @@ class TableBuilder
         return $file;
     }
     
-    public function getNavigation($id, $queryBuilder, $pagination): array
+    public function getNavigation(?int $id, QueryBuilder $queryBuilder, array $pagination): array
     {
         if($id === null) {
             return array('prev' => null, 'next' => null);
@@ -908,7 +916,7 @@ class TableBuilder
         );
     }
     
-    public function getSelection($queryBuilder, $pagination, $property = 'DISTINCT o.id'): array
+    public function getSelection(QueryBuilder $queryBuilder, array $pagination, string $property = 'DISTINCT o.id'): array
     {
         $queryBuilder->select($property);
         
