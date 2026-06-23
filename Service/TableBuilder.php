@@ -761,7 +761,7 @@ class TableBuilder
                 $rowData = $row->serializeForExport();
                 
                 foreach($rowData as $entry) {
-                    $row = EntityRow::fromValues($entry);
+                    $row = new EntityRow(array_values($entry));
                     $writer->addRow($row);
                 }
             }
