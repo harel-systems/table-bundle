@@ -351,12 +351,12 @@ abstract class Table
         return $this->getAggregationQueryBuilder($queryBuilder, $queryBuilder->getRootEntities()[0], $selector, '_a_.id', $params, $joins)->getQuery();
     }
     
-    protected function getAggregatedValue($queryBuilder, $selector, $params = array(), $joins = array())
+    public function getAggregatedValue($queryBuilder, $selector, $params = array(), $joins = array())
     {
         return $this->getAggregationQuery($queryBuilder, $selector, $params, $joins)->getSingleScalarResult();
     }
     
-    protected function getAggregatedValues($queryBuilder, $selector, $params = array(), $joins = array())
+    public function getAggregatedValues($queryBuilder, $selector, $params = array(), $joins = array())
     {
         return $this->getAggregationQuery($queryBuilder, $selector, $params, $joins)->getScalarResult()[0];
     }
