@@ -101,7 +101,7 @@ class TableBuilder
             throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
         }
         if(!isset($this->columns[$source])) {
-            throw new \Exception('Column with identifier ' . $identifier . ' doesn\'t exist in this table');
+            throw new \Exception('Column with identifier ' . $source . ' doesn\'t exist in this table');
         }
         
         $column = (clone ($this->columnLocator->has($class) ? $this->columnLocator->get($class) : new $class()))
@@ -123,7 +123,7 @@ class TableBuilder
             throw new \Exception('A column with identifier ' . $identifier . ' already exists in this table');
         }
         if(!isset($this->columns[$source])) {
-            throw new \Exception('Column with identifier ' . $identifier . ' doesn\'t exist in this table');
+            throw new \Exception('Column with identifier ' . $source . ' doesn\'t exist in this table');
         }
         
         $column = (clone ($this->columnLocator->has($class) ? $this->columnLocator->get($class) : new $class()))
